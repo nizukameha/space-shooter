@@ -5,6 +5,10 @@ const ship = document.querySelector<HTMLImageElement>("#ship");
 const blackHole = document.querySelector<HTMLImageElement>("#black-hole");
 const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
 
+let random = getRandomInt(50, 150);
+let randomStar = getRandomInt(50, 150);
+
+
 //Space ship object
 const spaceShip = {
     shipX: 225,
@@ -12,8 +16,6 @@ const spaceShip = {
     shipWidth: 50,
     shipHeight: 50
 }
-
-let random = getRandomInt(50, 150);
 
 //Ennemies object
 const bHole = {
@@ -70,20 +72,45 @@ document.addEventListener("keyup", (event) => {
     }
 });
 
+
 /**
- * Generate random int
- * @param max interval (from 0 to max)
+ * Draw stars
+ */
+function drawStars(stars:any) {
+    if (ctx) {
+        ctx.beginPath();
+        ctx.rect(stars.starY, stars.starRadius, 0, Math.PI * 2);
+        ctx.arc(stars.starX, stars.starY, stars.starRadius, 0, Math.PI * 2);
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.closePath();
+    }
+}
+
+
+/**
+ * Generate random int between the given interval
+ * @param min interval minimum
+ * @param max interval maximum
  * @returns random int
  */
-//function getRandomInt(max:number) {
-  //  return Math.floor(Math.random() * max);  
-//}
-
-
-
 function getRandomInt(min:number, max:number) {
     return Math.random() * (max - min) + min;
-  }
+}
+
+function generateStars() {
+    for (let index = 0; index < 100; index++) {      
+        const stars = {
+            starRadius: getRandomInt(0, 3),
+            starX: getRandomInt(0, 500),
+            starY: getRandomInt(0, 700),
+            starWidth: randomStar,
+            starHeight: randomStar
+        }
+        drawStars(stars);
+    }
+}
+
 
 /**
  * Draw the space ship
@@ -136,4 +163,5 @@ function moveEnnemies(e:any) {
     }
 }
 
+generateStars();
 drawShip();
