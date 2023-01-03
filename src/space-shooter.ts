@@ -2,20 +2,29 @@
 const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const ship = document.querySelector<HTMLImageElement>("#ship");
+const blackHole = document.querySelector<HTMLImageElement>("#black-hole");
+
 //Position of the space ship
 let shipX: number = 225;
 let shipY: number = 640;
+
 //Dimension of the space ship
 const shipWidth: number = 50;
 const shipHeight: number = 50;
 
+//Dimension of ennemies
+
+//Position of ennemies
+let ennemieX: number = getRandomInt(300);
+let ennemieY: number = getRandomInt(650);
+
+//Key pressed
 let rightPressed: boolean = false;
 let leftPressed: boolean = false;
 let downPressed:boolean = false;
 let upPressed:boolean = false;
 
-
-//Des event qui écoutent si une des touches est préssé. Si oui cela déclenche une fonction
+//If key pressed a function is called
 document.addEventListener("keydown", (event) => {
     if (event.key == "Right" || event.key == "ArrowRight") {
         rightPressed = true;
@@ -51,6 +60,14 @@ document.addEventListener("keyup", (event) => {
     }
 });
 
+/**
+ * Generate random int
+ * @param max interval (from 0 to max)
+ * @returns random int
+ */
+function getRandomInt(max:number) {
+    return Math.floor(Math.random() * max);  
+}
 
 /**
  * Draw the space ship
@@ -73,4 +90,15 @@ function drawShip() {
     }
 };
 
+/**
+ * Draw ennemies
+ */
+function drawEnnemies() {
+    requestAnimationFrame(drawEnnemies);//draw ship infinite
+    if (ctx && blackHole) {
+        ctx.drawImage(blackHole, ennemieX, ennemieY, 50, 50);
+    }
+};
+
+drawEnnemies();
 drawShip();
