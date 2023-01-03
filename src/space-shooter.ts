@@ -4,6 +4,7 @@ const ctx = canvas.getContext("2d");
 const ship = document.querySelector<HTMLImageElement>("#ship");
 const blackHole = document.querySelector<HTMLImageElement>("#black-hole");
 const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
+const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
 
 let health = document.querySelector<HTMLSpanElement>('#health');
 let healthCounter:number = 100;
@@ -30,9 +31,18 @@ const bHole = {
     ennemieHeight: random
 }
 
+const gala = {
+    ennemieX : getRandomInt(0, 450),
+    ennemieY : getRandomInt(-100, -50),
+    ennemieWidth: random,
+    ennemieHeight: random
+}
+
 const rPlanet = {
     ennemieX : getRandomInt(0, 450),
-    ennemieY : getRandomInt(0, 500)
+    ennemieY : getRandomInt(-600, -200),
+    ennemieWidth : random,
+    ennemieHeight : random
 }
 
 //Key pressed
@@ -106,7 +116,7 @@ function getRandomInt(min:number, max:number) {
  * Generate stars randomly in the canvas
  */
 function generateStars() {
-    for (let index = 0; index < 100; index++) {      
+    for (let index = 0; index < 150; index++) {      
         const stars = {
             starRadius: getRandomInt(0, 3),
             starX: getRandomInt(0, 500),
@@ -123,9 +133,11 @@ function generateStars() {
  */
 function drawShip() {
     requestAnimationFrame(drawShip);//draw ship infinite
-    collisionDetection();
+    collisionDetection(bHole);
+    collisionDetection(rPlanet);
     drawEnnemies(blackHole, bHole);
     drawEnnemies(redPlanet, rPlanet);
+    drawEnnemies(galaxy, gala);
     if (ctx && ship) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
         if (rightPressed && spaceShip.shipX <= (canvas.width - 50)) {
@@ -140,8 +152,9 @@ function drawShip() {
         }
         ctx.drawImage(ship, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
-    if(healthCounter == 0) {
+    if(healthCounter < 0) {
         alert('GAME OVER');
+        document.location.reload();//Restart the game
     }
 };
 
@@ -165,8 +178,8 @@ function moveEnnemies(e:any) {
     if (e.ennemieY <= 700) {
         e.ennemieY += 3;
     } else {
-        e.ennemieX = getRandomInt(0, 450);
-        e.ennemieY = getRandomInt(-100, -50);
+        e.ennemieX = getRandomInt(-50, 450);
+        e.ennemieY = getRandomInt(-600, -50);
         random = getRandomInt(50, 150);
         e.ennemieWidth = random;
         e.ennemieHeight = random;
@@ -174,9 +187,9 @@ function moveEnnemies(e:any) {
 }
 
 
-function collisionDetection() {
-    if (spaceShip.shipX > bHole.ennemieX - bHole.ennemieWidth && spaceShip.shipX < bHole.ennemieX + bHole.ennemieWidth){
-        if (spaceShip.shipY > bHole.ennemieY && spaceShip.shipY < bHole.ennemieY + bHole.ennemieHeight){
+function collisionDetection(e) {
+    if (spaceShip.shipX > e.ennemieX - e.ennemieWidth && spaceShip.shipX < e.ennemieX + e.ennemieWidth){
+        if (spaceShip.shipY > e.ennemieY && spaceShip.shipY < e.ennemieY + e.ennemieHeight){
             healthCounter--;
             if (health) {
                 health.innerHTML = String(healthCounter);
