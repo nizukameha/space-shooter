@@ -1,6 +1,8 @@
 * { 
     padding: 0;
-    margin: 0; 
+    margin: 0;
+    font-family: 'Press Start 2P', cursive;
+    color: white;
 }
 body {
     background-color: rgb(0, 0, 0);
@@ -13,4 +15,46 @@ canvas {
 }
 #ship {
     display: none;
+}
+.container {
+    display: flex;
+}
+.container-infos {
+    position: absolute;
+}
+.container-canva h1 {
+    width: 97vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+.container-infos {
+    margin-top: 10vh;
+}
+.container-infos h2, .container-infos p, #arrow-key {
+    margin: 20px;
+}
+.container-infos h3 {
+    margin: 200px 20px 20px 20px;
+}
+#arrow-key {
+    width: 100px;
+    height: auto;
+    margin: 0;
+}
+#space-key {
+    width: 200px;
+    height: auto;
+}
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+.container-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
