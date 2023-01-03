@@ -7,9 +7,11 @@ const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
 const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
 
 let health = document.querySelector<HTMLSpanElement>('#health');
-let healthCounter:number = 100;
+let healthCounter: number = 100;
 let random = getRandomInt(50, 150);
 let randomStar = getRandomInt(50, 150);
+let randomX = Math.trunc(getRandomInt(0, 450));
+let randomY = Math.trunc(getRandomInt(-800, -50));
 
 if (health) {
     health.innerHTML = String(healthCounter);
@@ -25,31 +27,32 @@ const spaceShip = {
 
 //Ennemies object
 const bHole = {
-    ennemieX : getRandomInt(0, 450),
-    ennemieY : getRandomInt(-100, -50),
+    ennemieX: randomX,
+    ennemieY: randomY,
     ennemieWidth: random,
     ennemieHeight: random
 }
 
 const gala = {
-    ennemieX : getRandomInt(0, 450),
-    ennemieY : getRandomInt(-100, -50),
+    ennemieX: randomX,
+    ennemieY: randomY,
     ennemieWidth: random,
     ennemieHeight: random
 }
 
 const rPlanet = {
-    ennemieX : getRandomInt(0, 450),
-    ennemieY : getRandomInt(-600, -200),
-    ennemieWidth : random,
-    ennemieHeight : random
+    ennemieX: randomX,
+    ennemieY: randomY,
+    ennemieWidth: random,
+    ennemieHeight: random
 }
+
 
 //Key pressed
 let rightPressed: boolean = false;
 let leftPressed: boolean = false;
-let downPressed:boolean = false;
-let upPressed:boolean = false;
+let downPressed: boolean = false;
+let upPressed: boolean = false;
 
 //If a key is pressed a function is called
 document.addEventListener("keydown", (event) => {
@@ -91,7 +94,7 @@ document.addEventListener("keyup", (event) => {
 /**
  * Draw stars
  */
-function drawStars(stars:any) {
+function drawStars(stars: any) {
     if (ctx) {
         ctx.beginPath();
         ctx.rect(stars.starY, stars.starRadius, 0, Math.PI * 2);
@@ -108,7 +111,7 @@ function drawStars(stars:any) {
  * @param max interval maximum
  * @returns random int
  */
-function getRandomInt(min:number, max:number) {
+function getRandomInt(min: number, max: number) {
     return Math.random() * (max - min) + min;
 }
 
@@ -116,11 +119,11 @@ function getRandomInt(min:number, max:number) {
  * Generate stars randomly in the canvas
  */
 function generateStars() {
-    for (let index = 0; index < 150; index++) {      
+    for (let index = 0; index < 150; index++) {
         const stars = {
-            starRadius: getRandomInt(0, 3),
-            starX: getRandomInt(0, 500),
-            starY: getRandomInt(0, 700),
+            starRadius: Math.trunc(getRandomInt(0, 3)),
+            starX: Math.trunc(getRandomInt(0, 500)),
+            starY: Math.trunc(getRandomInt(0, 700)),
             starWidth: randomStar,
             starHeight: randomStar
         }
@@ -135,6 +138,7 @@ function drawShip() {
     requestAnimationFrame(drawShip);//draw ship infinite
     collisionDetection(bHole);
     collisionDetection(rPlanet);
+    collisionDetection(gala);
     drawEnnemies(blackHole, bHole);
     drawEnnemies(redPlanet, rPlanet);
     drawEnnemies(galaxy, gala);
@@ -152,7 +156,7 @@ function drawShip() {
         }
         ctx.drawImage(ship, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
-    if(healthCounter < 0) {
+    if (healthCounter < 0) {
         alert('GAME OVER');
         document.location.reload();//Restart the game
     }
@@ -161,7 +165,7 @@ function drawShip() {
 /**
  * Draw ennemies
  */
-function drawEnnemies(eImg:any, e:any) {
+function drawEnnemies(eImg: any, e: any) {
     moveEnnemies(e);
     if (ctx && e) {
         ctx.drawImage(eImg, e.ennemieX, e.ennemieY, e.ennemieWidth, e.ennemieHeight);
@@ -171,25 +175,28 @@ function drawEnnemies(eImg:any, e:any) {
 /**
  * Move ennemies on Y axis
  */
-function moveEnnemies(e:any) {
+function moveEnnemies(e: any) {
     if (ctx) {
         ctx.clearRect(e.ennemieX, e.ennemieY, e.ennemieWidth, e.ennemieHeight);
     }
     if (e.ennemieY <= 700) {
         e.ennemieY += 3;
     } else {
-        e.ennemieX = getRandomInt(-50, 450);
-        e.ennemieY = getRandomInt(-600, -50);
-        random = getRandomInt(50, 150);
+        e.ennemieX = Math.trunc(getRandomInt(-50, 450));
+        e.ennemieY = Math.trunc(getRandomInt(-800, -50));
+        random = Math.trunc(getRandomInt(50, 150));
         e.ennemieWidth = random;
         e.ennemieHeight = random;
     }
 }
 
-
-function collisionDetection(e) {
-    if (spaceShip.shipX > e.ennemieX - e.ennemieWidth && spaceShip.shipX < e.ennemieX + e.ennemieWidth){
-        if (spaceShip.shipY > e.ennemieY && spaceShip.shipY < e.ennemieY + e.ennemieHeight){
+/**
+ * Detect if there is a collision between the space ship and an ennemie
+ * @param e event
+ */
+function collisionDetection(e: any) {
+    if (spaceShip.shipX > e.ennemieX && spaceShip.shipX < e.ennemieX + e.ennemieWidth) {
+        if (spaceShip.shipY > e.ennemieY && spaceShip.shipY < e.ennemieY + e.ennemieHeight) {
             healthCounter--;
             if (health) {
                 health.innerHTML = String(healthCounter);
@@ -197,13 +204,18 @@ function collisionDetection(e) {
             }
         }
     } else {
-        if(health) {
+        if (health) {
             health.style.color = 'white';
         }
     }
-    
 }
 
 
 generateStars();
 drawShip();
+
+/*
+Les points de vie ne s'affichent pas toujours en rouge quand ils diminuent
+Des fois les ennemis se génerent les uns sur les autres
+Il arrive ausi que le space ship prennent des dégats sans etre en collision avec un ennemi
+*/
