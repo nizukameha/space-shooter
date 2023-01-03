@@ -5,9 +5,14 @@ const ship = document.querySelector<HTMLImageElement>("#ship");
 const blackHole = document.querySelector<HTMLImageElement>("#black-hole");
 const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
 
+let health = document.querySelector<HTMLSpanElement>('#health');
+let healthCounter:number = 100;
 let random = getRandomInt(50, 150);
 let randomStar = getRandomInt(50, 150);
 
+if (health) {
+    health.innerHTML = String(healthCounter);
+}
 
 //Space ship object
 const spaceShip = {
@@ -87,7 +92,6 @@ function drawStars(stars:any) {
     }
 }
 
-
 /**
  * Generate random int between the given interval
  * @param min interval minimum
@@ -98,6 +102,9 @@ function getRandomInt(min:number, max:number) {
     return Math.random() * (max - min) + min;
 }
 
+/**
+ * Generate stars randomly in the canvas
+ */
 function generateStars() {
     for (let index = 0; index < 100; index++) {      
         const stars = {
@@ -111,12 +118,12 @@ function generateStars() {
     }
 }
 
-
 /**
  * Draw the space ship
  */
 function drawShip() {
     requestAnimationFrame(drawShip);//draw ship infinite
+    collisionDetection();
     drawEnnemies(blackHole, bHole);
     drawEnnemies(redPlanet, rPlanet);
     if (ctx && ship) {
@@ -132,6 +139,9 @@ function drawShip() {
             spaceShip.shipY += 5;
         }
         ctx.drawImage(ship, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
+    }
+    if(healthCounter == 0) {
+        alert('GAME OVER');
     }
 };
 
@@ -162,6 +172,25 @@ function moveEnnemies(e:any) {
         e.ennemieHeight = random;
     }
 }
+
+
+function collisionDetection() {
+    if (spaceShip.shipX > bHole.ennemieX - bHole.ennemieWidth && spaceShip.shipX < bHole.ennemieX + bHole.ennemieWidth){
+        if (spaceShip.shipY > bHole.ennemieY && spaceShip.shipY < bHole.ennemieY + bHole.ennemieHeight){
+            healthCounter--;
+            if (health) {
+                health.innerHTML = String(healthCounter);
+                health.style.color = 'red';
+            }
+        }
+    } else {
+        if(health) {
+            health.style.color = 'white';
+        }
+    }
+    
+}
+
 
 generateStars();
 drawShip();
