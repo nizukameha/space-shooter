@@ -13,9 +13,6 @@ canvas {
     margin: 0 auto;
     border: 1px solid white;
 }
-#ship {
-    display: none;
-}
 .container {
     display: flex;
 }
