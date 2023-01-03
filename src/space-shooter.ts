@@ -2,9 +2,12 @@
 const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const ship = document.querySelector<HTMLImageElement>("#ship");
-//Position of the ship
+//Position of the space ship
 let shipX: number = 225;
 let shipY: number = 640;
+//Dimension of the space ship
+const shipWidth: number = 50;
+const shipHeight: number = 50;
 
 let rightPressed: boolean = false;
 let leftPressed: boolean = false;
@@ -55,18 +58,18 @@ document.addEventListener("keyup", (event) => {
 function drawShip() {
     requestAnimationFrame(drawShip);//draw ship infinite
     if (ctx && ship) {
-        ctx.clearRect(shipX, shipY, 50, 50);
-        if (rightPressed && shipX <= 450) {
+        ctx.clearRect(shipX, shipY, shipWidth, shipHeight);
+        if (rightPressed && shipX <= (canvas.width - 50)) {
             shipX += 5;
         } else if (leftPressed && shipX > 0) {
             shipX -= 5;
         }
         if (upPressed && shipY > 0) {
             shipY -= 5;
-        } else if (downPressed && shipY <= 640) {
+        } else if (downPressed && shipY <= (canvas.height - 60)) {
             shipY += 5;
         }
-        ctx.drawImage(ship, shipX, shipY, 50, 50);
+        ctx.drawImage(ship, shipX, shipY, shipWidth, shipHeight);
     }
 };
 
