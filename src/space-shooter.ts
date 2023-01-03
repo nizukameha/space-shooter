@@ -15,8 +15,8 @@ const shipHeight: number = 50;
 //Dimension of ennemies
 
 //Position of ennemies
-let ennemieX: number = getRandomInt(300);
-let ennemieY: number = getRandomInt(650);
+let ennemieX: number = getRandomInt(450);
+let ennemieY: number = getRandomInt(500);
 
 //Key pressed
 let rightPressed: boolean = false;
@@ -74,6 +74,9 @@ function getRandomInt(max:number) {
  */
 function drawShip() {
     requestAnimationFrame(drawShip);//draw ship infinite
+    
+    drawEnnemies();
+    
     if (ctx && ship) {
         ctx.clearRect(shipX, shipY, shipWidth, shipHeight);
         if (rightPressed && shipX <= (canvas.width - 50)) {
@@ -94,11 +97,26 @@ function drawShip() {
  * Draw ennemies
  */
 function drawEnnemies() {
-    requestAnimationFrame(drawEnnemies);//draw ship infinite
+    moveEnnemies();
     if (ctx && blackHole) {
+        
         ctx.drawImage(blackHole, ennemieX, ennemieY, 50, 50);
     }
 };
 
-drawEnnemies();
+/**
+ * Move ennemies on Y axis
+ */
+function moveEnnemies() {
+    if (ctx) {
+        ctx.clearRect(ennemieX, ennemieY, 50, 50);
+    }
+    if (ennemieY <= 700) {
+        ennemieY += 3;
+    } else {
+        ennemieX = getRandomInt(450);
+        ennemieY= getRandomInt(500);
+    }
+}
+
 drawShip();
