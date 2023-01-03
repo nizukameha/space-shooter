@@ -1,17 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/src/space-shooter.ts" type="module"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <title>Space Shooter</title>
 </head>
+
 <body>
-    <img src="../assets/ship.png" alt="ship" id="ship">
-    <canvas id="myCanvas" width="500" height="700">
-        
-    </canvas>
+    <div class="container">
+        <div class="container-infos">
+            <h2>Score :</h2>
+            <h2>Time :</h2>
+            <h3>How to play ?</h3>
+            <div class="container-controls">
+                <div class="controls">
+                    <img src="../assets/arrow-keys.png" alt="arrow keys" id="arrow-key">
+                    <p>MOOVE</p>
+                </div>
+                <div class="controls">
+                    <img src="../assets/space-key.png" alt="space key" id="space-key">
+                    <p id="shoot">SHOOT</p>
+                </div>
+            </div>
+        </div>
+        <div class="container-canva">
+            <h1>Space Shooter</h1>
+            <img src="../assets/ship.png" alt="ship" id="ship">
+            <canvas id="myCanvas" width="500" height="700"></canvas>
+        </div>
+    </div>
+
 </body>
+
 </html>
