@@ -8,10 +8,20 @@ body {
     background-color: rgb(0, 0, 0);
 }
 canvas { 
+    position: absolute;
+    left: 32%;
     background: rgb(0, 0, 0);
     display: block;
     margin: 0 auto;
     border: 1px solid white;
+}
+#myCanvas {
+    z-index: 2;
+    opacity: 0.8;
+}
+#canvaBackground {
+    z-index: 1;
+    
 }
 .container {
     display: flex;
