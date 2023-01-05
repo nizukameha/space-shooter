@@ -1,6 +1,8 @@
 //Game level
 const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("myCanvas");
+const canvaBackground: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvaBackground");
 const ctx = canvas.getContext("2d");
+const ctxBackground = canvaBackground.getContext("2d");
 const ship = document.querySelector<HTMLImageElement>("#ship");
 const blackHole = document.querySelector<HTMLImageElement>("#black-hole");
 const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
@@ -102,13 +104,13 @@ document.addEventListener("keyup", (event) => {
  * Draw stars
  */
 function drawStars(stars: any) {
-    if (ctx) {
-        ctx.beginPath();
-        ctx.rect(stars.starY, stars.starRadius, 0, Math.PI * 2);
-        ctx.arc(stars.starX, stars.starY, stars.starRadius, 0, Math.PI * 2);
-        ctx.fillStyle = "white";
-        ctx.fill();
-        ctx.closePath();
+    if (ctxBackground) {
+        ctxBackground.beginPath();
+        ctxBackground.rect(stars.starY, stars.starRadius, 0, Math.PI * 2);
+        ctxBackground.arc(stars.starX, stars.starY, stars.starRadius, 0, Math.PI * 2);
+        ctxBackground.fillStyle = "white";
+        ctxBackground.fill();
+        ctxBackground.closePath();
     }
 }
 
@@ -143,9 +145,7 @@ function generateStars() {
  */
 function drawShip() {
     requestAnimationFrame(drawShip);//draw ship infinite
-    collisionDetection(bHole);
-    collisionDetection(rPlanet);
-    collisionDetection(gala);
+    collisionDetection(ennemies);
     drawEnnemies(ennemies);
     if (ctx && ship) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
@@ -170,10 +170,10 @@ function drawShip() {
 /**
  * Draw ennemies
  */
-function drawEnnemies(e:any) {
+function drawEnnemies(e: any) {
     moveEnnemies(e);
     for (let i = 0; i < ennemies.length; i++) {
-        if (ctx && e) {       
+        if (ctx && e) {
             ctx.drawImage(e[i].image, e[i].ennemieX, e[i].ennemieY, e[i].ennemieWidth, e[i].ennemieHeight);
         }
     }
@@ -187,15 +187,14 @@ function moveEnnemies(en: any) {
         for (let i = 0; i < ennemies.length; i++) {
             ctx.clearRect(en[i].ennemieX, en[i].ennemieY, en[i].ennemieWidth, en[i].ennemieHeight);
             if (en[i].ennemieY <= canvas.height) {
-                en[i].ennemieY += 1;
+                en[i].ennemieY += 5;
             } else {// ON A UN ENORME PROBLEME ICI
                 ennemieAxisRandom(en[i]);
                 random = Math.trunc(getRandomInt(50, 150));
                 en[i].ennemieWidth = random;
                 en[i].ennemieHeight = random;
-            }   
+            }
         }
-        
     }
 }
 
@@ -222,15 +221,14 @@ function generateRandomX() {
  */
 function generateRandomY() {
     let randomY = [];
-    let intervalMin = -64;
-    let intervalMax = (Math.trunc((canvas.height) / ennemies.length));
-    console.log(intervalMax);
+    let intervalMin = -783;
+    let intervalMax = (Math.trunc((canvas.height) / ennemies.length - 150));
     for (let i = 0; i < ennemies.length; i++) {
-        randomY[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMax / 2));
-        console.log('Y : ' + Math.trunc(intervalMin + intervalMax), Math.trunc(intervalMax / 2));
+        randomY[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMin + intervalMax * 2));
         intervalMax += intervalMax;
     }
     randomY.sort(() => 0.5 - Math.random());
+    console.log('randomY : ' + randomY)
     return (randomY)
 }
 
@@ -238,13 +236,13 @@ function generateRandomY() {
 /**
  * Define random value for the Y axis of the ennemie
  */
-function ennemieAxisRandom(enn:any) {
+function ennemieAxisRandom(enn: any) {
     let randomX = generateRandomX();
     let randomY = generateRandomY();
 
     //console.log(randomX);
-    console.log(randomY);
-    
+    //console.log(randomY);
+
     for (let i = 0; i < randomX.length; i++) {
         //ennemies[i].ennemieX = randomX[i];
         enn.ennemieX = Number(randomX.splice(i, 1));
@@ -262,19 +260,22 @@ function ennemieAxisRandom(enn:any) {
  * @param e event
  */
 function collisionDetection(e: any) {
-    if (spaceShip.shipX > e.ennemieX && spaceShip.shipX < e.ennemieX + e.ennemieWidth) {
-        if (spaceShip.shipY > e.ennemieY && spaceShip.shipY < e.ennemieY + e.ennemieHeight) {
-            healthCounter--;
-            if (health) {
-                health.innerHTML = String(healthCounter);
-                health.style.color = 'red';
+    for (let i = 0; i < e.length; i++) {
+        if (spaceShip.shipX > e[i].ennemieX && spaceShip.shipX < e[i].ennemieX + e[i].ennemieWidth) {
+            if (spaceShip.shipY > e[i].ennemieY && spaceShip.shipY < e[i].ennemieY + e[i].ennemieHeight) {
+                healthCounter--;
+                if (health) {
+                    health.innerHTML = String(healthCounter);
+                    health.style.color = 'red';
+                }
+            } else {
+                if (health) {
+                    health.style.color = 'white';
+                }
             }
         }
-    } else {
-        if (health) {
-            health.style.color = 'white';
-        }
     }
+    
 }
 
 
@@ -282,9 +283,6 @@ generateStars();
 drawShip();
 
 /*
-Les points de vie ne s'affichent pas toujours en rouge quand ils diminuent :
-envoyer dans la fonction collision en argument le space ship / dans cette fonction boucler sur la liste des ennemies (tableau d'objets) et dire que si le spaceship est en collision avec un ennemie alors on arrete la boucle et on passe la vie en rouge
-
 REVOIR LA GENERATION ALEATOIRE D'ENNEMIES
 
 Il arrive ausi que le space ship prennent des dégats sans etre en collision avec un ennemi
