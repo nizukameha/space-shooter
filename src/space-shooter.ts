@@ -8,10 +8,9 @@ const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
 
 let health = document.querySelector<HTMLSpanElement>('#health');
 let healthCounter: number = 100;
-let random = getRandomInt(50, 150);
+let random = getRandomInt(100, 100);
 let randomStar = getRandomInt(50, 150);
-let randomX = Math.trunc(getRandomInt(0, 450));
-let randomY = Math.trunc(getRandomInt(-800, -50));
+
 
 if (health) {
     health.innerHTML = String(healthCounter);
@@ -25,28 +24,36 @@ const spaceShip = {
     shipHeight: 50
 }
 
-//Ennemies object
 const bHole = {
-    ennemieX: randomX,
-    ennemieY: randomY,
+    image: blackHole,
+    ennemieX: 0,
+    ennemieY: 0,
     ennemieWidth: random,
     ennemieHeight: random
 }
 
 const gala = {
-    ennemieX: randomX,
-    ennemieY: randomY,
+    image: galaxy,
+    ennemieX: 0,
+    ennemieY: 0,
     ennemieWidth: random,
     ennemieHeight: random
 }
 
 const rPlanet = {
-    ennemieX: randomX,
-    ennemieY: randomY,
+    image: redPlanet,
+    ennemieX: 0,
+    ennemieY: 0,
     ennemieWidth: random,
     ennemieHeight: random
 }
 
+
+let ennemies = [bHole, gala, rPlanet];
+
+for (let i = 0; i < ennemies.length; i++) {
+    ennemieAxisRandom(ennemies[i]);
+}
 
 //Key pressed
 let rightPressed: boolean = false;
@@ -139,9 +146,7 @@ function drawShip() {
     collisionDetection(bHole);
     collisionDetection(rPlanet);
     collisionDetection(gala);
-    drawEnnemies(blackHole, bHole);
-    drawEnnemies(redPlanet, rPlanet);
-    drawEnnemies(galaxy, gala);
+    drawEnnemies(ennemies);
     if (ctx && ship) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
         if (rightPressed && spaceShip.shipX <= (canvas.width - 50)) {
@@ -165,30 +170,92 @@ function drawShip() {
 /**
  * Draw ennemies
  */
-function drawEnnemies(eImg: any, e: any) {
+function drawEnnemies(e:any) {
     moveEnnemies(e);
-    if (ctx && e) {
-        ctx.drawImage(eImg, e.ennemieX, e.ennemieY, e.ennemieWidth, e.ennemieHeight);
+    for (let i = 0; i < ennemies.length; i++) {
+        if (ctx && e) {       
+            ctx.drawImage(e[i].image, e[i].ennemieX, e[i].ennemieY, e[i].ennemieWidth, e[i].ennemieHeight);
+        }
     }
 };
 
 /**
  * Move ennemies on Y axis
  */
-function moveEnnemies(e: any) {
+function moveEnnemies(en: any) {
     if (ctx) {
-        ctx.clearRect(e.ennemieX, e.ennemieY, e.ennemieWidth, e.ennemieHeight);
-    }
-    if (e.ennemieY <= 700) {
-        e.ennemieY += 3;
-    } else {
-        e.ennemieX = Math.trunc(getRandomInt(-50, 450));
-        e.ennemieY = Math.trunc(getRandomInt(-800, -50));
-        random = Math.trunc(getRandomInt(50, 150));
-        e.ennemieWidth = random;
-        e.ennemieHeight = random;
+        for (let i = 0; i < ennemies.length; i++) {
+            ctx.clearRect(en[i].ennemieX, en[i].ennemieY, en[i].ennemieWidth, en[i].ennemieHeight);
+            if (en[i].ennemieY <= canvas.height) {
+                en[i].ennemieY += 1;
+            } else {// ON A UN ENORME PROBLEME ICI
+                ennemieAxisRandom(en[i]);
+                random = Math.trunc(getRandomInt(50, 150));
+                en[i].ennemieWidth = random;
+                en[i].ennemieHeight = random;
+            }   
+        }
+        
     }
 }
+
+/**
+ * generate random postion on the X axis
+ * @returns randomX who is an array with position
+ */
+function generateRandomX() {
+    let randomX = [];
+    let intervalMin = -64;
+    let intervalMax = (Math.trunc((canvas.width) / ennemies.length));
+    for (let i = 0; i < ennemies.length; i++) {
+        randomX[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMax / 2));
+        //console.log(Math.trunc(intervalMin + intervalMax), Math.trunc(intervalMax / 2));
+        intervalMax += intervalMax;
+    }
+    randomX.sort(() => 0.5 - Math.random());
+    return (randomX)
+}
+
+/**
+ * generate random postion on the Y axis
+ * @returns randomY who is an array with position
+ */
+function generateRandomY() {
+    let randomY = [];
+    let intervalMin = -64;
+    let intervalMax = (Math.trunc((canvas.height) / ennemies.length));
+    console.log(intervalMax);
+    for (let i = 0; i < ennemies.length; i++) {
+        randomY[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMax / 2));
+        console.log('Y : ' + Math.trunc(intervalMin + intervalMax), Math.trunc(intervalMax / 2));
+        intervalMax += intervalMax;
+    }
+    randomY.sort(() => 0.5 - Math.random());
+    return (randomY)
+}
+
+
+/**
+ * Define random value for the Y axis of the ennemie
+ */
+function ennemieAxisRandom(enn:any) {
+    let randomX = generateRandomX();
+    let randomY = generateRandomY();
+
+    //console.log(randomX);
+    console.log(randomY);
+    
+    for (let i = 0; i < randomX.length; i++) {
+        //ennemies[i].ennemieX = randomX[i];
+        enn.ennemieX = Number(randomX.splice(i, 1));
+        enn.ennemieY = Number(randomY.splice(i, 1))
+    }
+    if (randomX.length == 0 && randomY.length == 0) {
+        generateRandomX();
+        generateRandomY();
+    }
+}
+
 
 /**
  * Detect if there is a collision between the space ship and an ennemie
@@ -215,7 +282,10 @@ generateStars();
 drawShip();
 
 /*
-Les points de vie ne s'affichent pas toujours en rouge quand ils diminuent
-Des fois les ennemis se génerent les uns sur les autres
+Les points de vie ne s'affichent pas toujours en rouge quand ils diminuent :
+envoyer dans la fonction collision en argument le space ship / dans cette fonction boucler sur la liste des ennemies (tableau d'objets) et dire que si le spaceship est en collision avec un ennemie alors on arrete la boucle et on passe la vie en rouge
+
+REVOIR LA GENERATION ALEATOIRE D'ENNEMIES
+
 Il arrive ausi que le space ship prennent des dégats sans etre en collision avec un ennemi
 */
