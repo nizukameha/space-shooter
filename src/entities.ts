@@ -3,7 +3,8 @@ interface Ennemies {
     ennemieX: number,
     ennemieY: number,
     ennemieWidth: number,
-    ennemieHeight: number
+    ennemieHeight: number,
+    isTouch: boolean
 }
 
 interface SpaceShip {
