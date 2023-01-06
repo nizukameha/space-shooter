@@ -19,6 +19,8 @@ let timeCounterS: number = 0;
 let timeCounterM: number = 0;
 let random = getRandomInt(50, 130);
 let randomStar = getRandomInt(50, 150);
+let movingEnnemie: number = 5;
+let movingShip: number = 5;
 
 //Key pressed
 let rightPressed: boolean = false;
@@ -196,24 +198,28 @@ function timer() {
             }
         }
     }, 1000)
+    setInterval(() => {
+        movingEnnemie += 1;
+        movingEnnemie += 1;
+    }, 5000)
 }
 
 function moveShip() {
     if (ctx && spaceShip.image && shot.image) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
         if (rightPressed && spaceShip.shipX <= (canvas.width - 50)) {
-            spaceShip.shipX += 7;
-            shot.shotX += 7;
+            spaceShip.shipX += movingEnnemie;
+            shot.shotX += 5;
         } else if (leftPressed && spaceShip.shipX > 0) {
-            spaceShip.shipX -= 7;
-            shot.shotX -= 7;
+            spaceShip.shipX -= movingEnnemie;
+            shot.shotX -= 5;
         }
         if (upPressed && spaceShip.shipY > 0) {
-            spaceShip.shipY -= 7;
-            shot.shotY -= 7;
+            spaceShip.shipY -= movingEnnemie;
+            shot.shotY -= 5;
         } else if (downPressed && spaceShip.shipY <= (canvas.height - 60)) {
-            spaceShip.shipY += 7;
-            shot.shotY += 7;
+            spaceShip.shipY += movingEnnemie;
+            shot.shotY += 5;
         }
         ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
@@ -223,9 +229,11 @@ function moveShip() {
     }
 }
 
+/**
+ * Shot of the ship
+ */
 function shipShot() {
     if (spacePressed && ctx && shot.image) {
-        //FAIRE LE TIR
         ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
         ctx.drawImage(shot.image, shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
         shot.shotY -= 15;
@@ -256,8 +264,8 @@ function moveEnnemies(en: any) {
         for (let i = 0; i < ennemies.length; i++) {
             ctx.clearRect(en[i].ennemieX, en[i].ennemieY, en[i].ennemieWidth, en[i].ennemieHeight);
             if (en[i].ennemieY <= canvas.height) {
-                en[i].ennemieY += 5;
-            } else {// ON A UN ENORME PROBLEME ICI
+                en[i].ennemieY += movingEnnemie;//
+            } else {
                 en[i].isTouch = false;
                 ennemieAxisRandom(en[i]);
                 random = Math.trunc(getRandomInt(50, 130));
