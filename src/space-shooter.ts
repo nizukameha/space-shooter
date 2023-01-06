@@ -46,7 +46,8 @@ const bHole:Ennemies = {
     ennemieX: 0,
     ennemieY: 0,
     ennemieWidth: random,
-    ennemieHeight: random
+    ennemieHeight: random,
+    isTouch: false
 }
 
 const gala:Ennemies = {
@@ -54,7 +55,8 @@ const gala:Ennemies = {
     ennemieX: 0,
     ennemieY: 0,
     ennemieWidth: random,
-    ennemieHeight: random
+    ennemieHeight: random,
+    isTouch: false
 }
 
 const rPlanet:Ennemies = {
@@ -62,7 +64,8 @@ const rPlanet:Ennemies = {
     ennemieX: 0,
     ennemieY: 0,
     ennemieWidth: random,
-    ennemieHeight: random
+    ennemieHeight: random,
+    isTouch: false
 }
 
 //Array of ennemies
@@ -120,7 +123,6 @@ document.addEventListener("keyup", (event) => {
     }
 });
 
-
 /**
  * Draw stars
  */
@@ -161,31 +163,31 @@ function generateStars() {
     }
 }
 
-
-
 /**
  * Draw the space ship
  */
 function drawShip() {
     requestAnimationFrame(drawShip);//draw ship infinite
     collisionDetection(ennemies);
-    drawEnnemies(ennemies);
     shipShot();
+    shotDetection(ennemies);
+    moveEnnemies(ennemies);
+    drawEnnemies(ennemies);
     if (ctx && spaceShip.image && shot.image) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
         if (rightPressed && spaceShip.shipX <= (canvas.width - 50)) {
-            spaceShip.shipX += 5;
-            shot.shotX += 5;
+            spaceShip.shipX += 7;
+            shot.shotX += 7;
         } else if (leftPressed && spaceShip.shipX > 0) {
-            spaceShip.shipX -= 5;
-            shot.shotX -= 5;
+            spaceShip.shipX -= 7;
+            shot.shotX -= 7;
         }
         if (upPressed && spaceShip.shipY > 0) {
-            spaceShip.shipY -= 5;
-            shot.shotY -= 5;
+            spaceShip.shipY -= 7;
+            shot.shotY -= 7;
         } else if (downPressed && spaceShip.shipY <= (canvas.height - 60)) {
-            spaceShip.shipY += 5;
-            shot.shotY += 5;
+            spaceShip.shipY += 7;
+            shot.shotY += 7;
         }
 
 
@@ -207,7 +209,10 @@ function shipShot() {
         ctx.drawImage(shot.image, shot.shotX, shot.shotY - 50, shot.shotWidth, shot.shotHeight);
         shot.shotY -= 15;
     } else {
-        shot.shotY = spaceShip.shipY;
+        if (ctx) {
+            ctx.clearRect(shot.shotX, shot.shotY - 50, shot.shotWidth, shot.shotHeight);
+            shot.shotY = spaceShip.shipY;
+        }
     }
 }
 
@@ -215,7 +220,7 @@ function shipShot() {
  * Draw ennemies
  */
 function drawEnnemies(e: any) {
-    moveEnnemies(e);
+    
     for (let i = 0; i < ennemies.length; i++) {
         if (ctx && e) {
             ctx.drawImage(e[i].image, e[i].ennemieX, e[i].ennemieY, e[i].ennemieWidth, e[i].ennemieHeight);
@@ -233,6 +238,7 @@ function moveEnnemies(en: any) {
             if (en[i].ennemieY <= canvas.height) {
                 en[i].ennemieY += 5;
             } else {// ON A UN ENORME PROBLEME ICI
+                en[i].isTouch = false;
                 ennemieAxisRandom(en[i]);
                 random = Math.trunc(getRandomInt(50, 130));
                 en[i].ennemieWidth = random;
@@ -252,7 +258,6 @@ function generateRandomX() {
     let intervalMax = (Math.trunc((canvas.width) / ennemies.length));
     for (let i = 0; i < ennemies.length; i++) {
         randomX[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMax / 2));
-        //console.log(Math.trunc(intervalMin + intervalMax), Math.trunc(intervalMax / 2));
         intervalMax += intervalMax;
     }
     randomX.sort(() => 0.5 - Math.random());
@@ -272,7 +277,6 @@ function generateRandomY() {
         intervalMax += intervalMax;
     }
     randomY.sort(() => 0.5 - Math.random());
-    console.log('randomY : ' + randomY)
     return (randomY)
 }
 
@@ -283,10 +287,6 @@ function generateRandomY() {
 function ennemieAxisRandom(enn: any) {
     let randomX = generateRandomX();
     let randomY = generateRandomY();
-
-    //console.log(randomX);
-    //console.log(randomY);
-
     for (let i = 0; i < randomX.length; i++) {
         //ennemies[i].ennemieX = randomX[i];
         enn.ennemieX = Number(randomX.splice(i, 1));
@@ -305,8 +305,8 @@ function ennemieAxisRandom(enn: any) {
  */
 function collisionDetection(e: any) {
     for (let i = 0; i < e.length; i++) {
-        if (spaceShip.shipX > e[i].ennemieX && spaceShip.shipX < e[i].ennemieX + e[i].ennemieWidth) {
-            if (spaceShip.shipY > e[i].ennemieY && spaceShip.shipY < e[i].ennemieY + e[i].ennemieHeight) {
+        if (spaceShip.shipX > e[i].ennemieX - (e[i].ennemieWidth / 2) && spaceShip.shipX < e[i].ennemieX + e[i].ennemieWidth) {// - (e[i].ennemieWidth / 2) car x est situé au centre de l'objet
+            if (spaceShip.shipY > e[i].ennemieY - (e[i].ennemieHeight / 2) && spaceShip.shipY < e[i].ennemieY + e[i].ennemieHeight) {
                 healthCounter--;
                 if (health) {
                     health.innerHTML = String(healthCounter);
@@ -320,6 +320,30 @@ function collisionDetection(e: any) {
         }
     }
     
+}
+
+function shotDetection(e:any) {
+    for (let i = 0; i < e.length; i++) {
+        if (shot.shotX > e[i].ennemieX - (e[i].ennemieWidth / 2) && shot.shotX < e[i].ennemieX + e[i].ennemieWidth) {
+            if (shot.shotY > e[i].ennemieY - (e[i].ennemieHeight / 2) && shot.shotY < e[i].ennemieY + e[i].ennemieHeight) {
+                if (ctx) {
+                    console.log('touché');
+                    e[i].isTouch = true;
+                    ctx.clearRect(e[i].ennemieX, e[i].ennemieY, e[i].ennemieWidth, e[i].ennemieHeight);
+                }   
+            }
+        }
+    }
+}
+
+
+function init() {
+    requestAnimationFrame(init);
+    drawShip()
+    collisionDetection(ennemies);
+    shipShot();
+    shotDetection(ennemies);
+    moveEnnemies(ennemies);
 }
 
 
