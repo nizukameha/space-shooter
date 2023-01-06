@@ -1,3 +1,6 @@
+//Interface
+import { SpaceShip, Ennemies } from "./entities";
+
 //Game level
 const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("myCanvas");
 const canvaBackground: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvaBackground");
@@ -7,26 +10,32 @@ const ship = document.querySelector<HTMLImageElement>("#ship");
 const blackHole = document.querySelector<HTMLImageElement>("#black-hole");
 const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
 const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
+const shot = document.querySelector<HTMLImageElement>("#shot");
 
 let health = document.querySelector<HTMLSpanElement>('#health');
 let healthCounter: number = 100;
-let random = getRandomInt(100, 100);
+let random = getRandomInt(50, 130);
 let randomStar = getRandomInt(50, 150);
 
+//Key pressed
+let rightPressed: boolean = false;
+let leftPressed: boolean = false;
+let downPressed: boolean = false;
+let upPressed: boolean = false;
+let spacePressed:boolean = false;
 
-if (health) {
-    health.innerHTML = String(healthCounter);
-}
+
 
 //Space ship object
-const spaceShip = {
+const spaceShip:SpaceShip = {
+    image: ship,
     shipX: 225,
     shipY: 640,
     shipWidth: 50,
     shipHeight: 50
 }
 
-const bHole = {
+const bHole:Ennemies = {
     image: blackHole,
     ennemieX: 0,
     ennemieY: 0,
@@ -34,7 +43,7 @@ const bHole = {
     ennemieHeight: random
 }
 
-const gala = {
+const gala:Ennemies = {
     image: galaxy,
     ennemieX: 0,
     ennemieY: 0,
@@ -42,7 +51,7 @@ const gala = {
     ennemieHeight: random
 }
 
-const rPlanet = {
+const rPlanet:Ennemies = {
     image: redPlanet,
     ennemieX: 0,
     ennemieY: 0,
@@ -50,18 +59,13 @@ const rPlanet = {
     ennemieHeight: random
 }
 
-
+//Array of ennemies
 let ennemies = [bHole, gala, rPlanet];
 
+//Generate ennemies first time
 for (let i = 0; i < ennemies.length; i++) {
     ennemieAxisRandom(ennemies[i]);
 }
-
-//Key pressed
-let rightPressed: boolean = false;
-let leftPressed: boolean = false;
-let downPressed: boolean = false;
-let upPressed: boolean = false;
 
 //If a key is pressed a function is called
 document.addEventListener("keydown", (event) => {
@@ -96,6 +100,17 @@ document.addEventListener("keyup", (event) => {
     }
     else if (event.key == "Up" || event.key == "ArrowUp") {
         upPressed = false;
+    }
+});
+document.addEventListener("keydown", (event) => {
+    if (event.code == "Space") {
+        spacePressed = true;
+    }
+
+});
+document.addEventListener("keyup", (event) => {
+    if (event.code == "Space") {
+        spacePressed = false;
     }
 });
 
@@ -140,6 +155,8 @@ function generateStars() {
     }
 }
 
+
+
 /**
  * Draw the space ship
  */
@@ -147,7 +164,7 @@ function drawShip() {
     requestAnimationFrame(drawShip);//draw ship infinite
     collisionDetection(ennemies);
     drawEnnemies(ennemies);
-    if (ctx && ship) {
+    if (ctx && spaceShip.image && shot) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
         if (rightPressed && spaceShip.shipX <= (canvas.width - 50)) {
             spaceShip.shipX += 5;
@@ -159,7 +176,14 @@ function drawShip() {
         } else if (downPressed && spaceShip.shipY <= (canvas.height - 60)) {
             spaceShip.shipY += 5;
         }
-        ctx.drawImage(ship, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
+
+
+        if (spacePressed) {
+            //FAIRE LE TIR
+            ctx.drawImage(shot, spaceShip.shipX, spaceShip.shipY - 50, spaceShip.shipWidth, spaceShip.shipHeight);
+        }
+
+        ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
     if (healthCounter < 0) {
         alert('GAME OVER');
@@ -190,7 +214,7 @@ function moveEnnemies(en: any) {
                 en[i].ennemieY += 5;
             } else {// ON A UN ENORME PROBLEME ICI
                 ennemieAxisRandom(en[i]);
-                random = Math.trunc(getRandomInt(50, 150));
+                random = Math.trunc(getRandomInt(50, 130));
                 en[i].ennemieWidth = random;
                 en[i].ennemieHeight = random;
             }
@@ -282,8 +306,18 @@ function collisionDetection(e: any) {
 generateStars();
 drawShip();
 
+//FONCTION INIT
+
+
+
+//Display health
+if (health) {
+    health.innerHTML = String(healthCounter);
+}
+
 /*
 REVOIR LA GENERATION ALEATOIRE D'ENNEMIES
+FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES
 
 Il arrive ausi que le space ship prennent des dégats sans etre en collision avec un ennemi
 */
