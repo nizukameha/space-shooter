@@ -10,7 +10,7 @@ const ship = document.querySelector<HTMLImageElement>("#ship");
 const blackHole = document.querySelector<HTMLImageElement>("#black-hole");
 const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
 const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
-const shot = document.querySelector<HTMLImageElement>("#shot");
+const shotImg = document.querySelector<HTMLImageElement>("#shot");
 
 let health = document.querySelector<HTMLSpanElement>('#health');
 let healthCounter: number = 100;
@@ -25,14 +25,20 @@ let upPressed: boolean = false;
 let spacePressed:boolean = false;
 
 
-
-//Space ship object
 const spaceShip:SpaceShip = {
     image: ship,
     shipX: 225,
     shipY: 640,
     shipWidth: 50,
     shipHeight: 50
+}
+
+const shot = {
+    image: shotImg,
+    shotX: spaceShip.shipX,
+    shotY: spaceShip.shipY,
+    shotWidth: 40,
+    shotHeight: 40
 }
 
 const bHole:Ennemies = {
@@ -164,24 +170,26 @@ function drawShip() {
     requestAnimationFrame(drawShip);//draw ship infinite
     collisionDetection(ennemies);
     drawEnnemies(ennemies);
-    if (ctx && spaceShip.image && shot) {
+    shipShot();
+    if (ctx && spaceShip.image && shot.image) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
         if (rightPressed && spaceShip.shipX <= (canvas.width - 50)) {
             spaceShip.shipX += 5;
+            shot.shotX += 5;
         } else if (leftPressed && spaceShip.shipX > 0) {
             spaceShip.shipX -= 5;
+            shot.shotX -= 5;
         }
         if (upPressed && spaceShip.shipY > 0) {
             spaceShip.shipY -= 5;
+            shot.shotY -= 5;
         } else if (downPressed && spaceShip.shipY <= (canvas.height - 60)) {
             spaceShip.shipY += 5;
+            shot.shotY += 5;
         }
 
 
-        if (spacePressed) {
-            //FAIRE LE TIR
-            ctx.drawImage(shot, spaceShip.shipX, spaceShip.shipY - 50, spaceShip.shipWidth, spaceShip.shipHeight);
-        }
+        
 
         ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
@@ -190,6 +198,18 @@ function drawShip() {
         document.location.reload();//Restart the game
     }
 };
+
+
+function shipShot() {
+    if (spacePressed && ctx && shot.image) {
+        //FAIRE LE TIR
+        ctx.clearRect(shot.shotX, shot.shotY - 50, shot.shotWidth, shot.shotHeight);
+        ctx.drawImage(shot.image, shot.shotX, shot.shotY - 50, shot.shotWidth, shot.shotHeight);
+        shot.shotY -= 15;
+    } else {
+        shot.shotY = spaceShip.shipY;
+    }
+}
 
 /**
  * Draw ennemies
