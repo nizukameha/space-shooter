@@ -6,11 +6,16 @@ const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("my
 const canvaBackground: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvaBackground");
 const ctx = canvas.getContext("2d");
 const ctxBackground = canvaBackground.getContext("2d");
+const containerCanvas = document.querySelector<HTMLDivElement>(".container-canva");
+const containerInfos = document.querySelector<HTMLDivElement>(".container-infos");
+const containerStart = document.querySelector<HTMLDivElement>(".container-start");
 const ship = document.querySelector<HTMLImageElement>("#ship");
 const blackHole = document.querySelector<HTMLImageElement>("#black-hole");
 const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
 const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
 const shotImg = document.querySelector<HTMLImageElement>("#shot");
+const normal = document.querySelector<HTMLButtonElement>("#normal");
+const hard = document.querySelector<HTMLButtonElement>("#hard");
 
 let health = document.querySelector<HTMLSpanElement>('#health');
 let time = document.querySelector<HTMLSpanElement>('#time');
@@ -20,7 +25,6 @@ let timeCounterM: number = 0;
 let random = getRandomInt(50, 130);
 let randomStar = getRandomInt(50, 150);
 let movingEnnemie: number = 5;
-let movingShip: number = 5;
 
 //Key pressed
 let rightPressed: boolean = false;
@@ -28,7 +32,7 @@ let leftPressed: boolean = false;
 let downPressed: boolean = false;
 let upPressed: boolean = false;
 let spacePressed: boolean = false;
-
+let isHard: boolean = false;
 
 const spaceShip:SpaceShip = {
     image: ship,
@@ -198,27 +202,26 @@ function timer() {
             }
         }
     }, 1000)
-    setInterval(() => {
-        movingEnnemie += 1;
-        movingEnnemie += 1;
-    }, 5000)
+    if (isHard) {
+        movingEnnemie += 8;
+    }
 }
 
 function moveShip() {
     if (ctx && spaceShip.image && shot.image) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
         if (rightPressed && spaceShip.shipX <= (canvas.width - 50)) {
-            spaceShip.shipX += movingEnnemie;
+            spaceShip.shipX += 7;
             shot.shotX += 5;
         } else if (leftPressed && spaceShip.shipX > 0) {
-            spaceShip.shipX -= movingEnnemie;
+            spaceShip.shipX -= 7;
             shot.shotX -= 5;
         }
         if (upPressed && spaceShip.shipY > 0) {
-            spaceShip.shipY -= movingEnnemie;
+            spaceShip.shipY -= 7;
             shot.shotY -= 5;
         } else if (downPressed && spaceShip.shipY <= (canvas.height - 60)) {
-            spaceShip.shipY += movingEnnemie;
+            spaceShip.shipY += 7;
             shot.shotY += 5;
         }
         ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
@@ -264,7 +267,7 @@ function moveEnnemies(en: any) {
         for (let i = 0; i < ennemies.length; i++) {
             ctx.clearRect(en[i].ennemieX, en[i].ennemieY, en[i].ennemieWidth, en[i].ennemieHeight);
             if (en[i].ennemieY <= canvas.height) {
-                en[i].ennemieY += movingEnnemie;//
+                en[i].ennemieY += movingEnnemie;
             } else {
                 en[i].isTouch = false;
                 ennemieAxisRandom(en[i]);
@@ -362,10 +365,32 @@ function shotDetection(e:any) {
     }
 }
 
+normal?.addEventListener('click', () => {
+    containerCanvas?.classList.remove('hide');
+    containerInfos?.classList.remove('hide');
+    if (containerStart) {
+        containerStart.style.display = 'none';
+    }
+    generateStars();
+    init();
+    timer();
+})
+
+hard?.addEventListener('click', () => {
+    containerCanvas?.classList.remove('hide');
+    containerInfos?.classList.remove('hide');
+    if (containerStart) {
+        containerStart.style.display = 'none';
+    }
+    isHard = true;
+    generateStars();
+    init();
+    timer();
+})
 
 generateStars();
-init();
-timer();
+//init();
+//timer();
 
 //Display health
 if (health) {
@@ -375,4 +400,6 @@ if (health) {
 /*
 REVOIR LA GENERATION ALEATOIRE D'ENNEMIES CAR C'EST LA MERDE
 FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES
+LA PERTE DE VIE EST ACCELEREE QUAND LE JEU VA PLUS VITE
+AJUSTER LE TIR (NE PAS RESTER APPUYER POUR TIRER)
 */

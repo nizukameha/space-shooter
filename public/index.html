@@ -15,24 +15,35 @@
 
 <body>
     <div class="container">
-        <div class="container-infos">
+        <div class="container-infos hide">
             <h2>Score: </h2>
             <h2>Health: <span id="health"></span></h2>
             <h2>Time: <span id="time"></span></h2>
-            <h3>How to play ?</h3>
-            <div class="container-controls">
-                <div class="controls">
-                    <img src="../assets/arrow-keys.png" alt="arrow keys" id="arrow-key">
-                    <p>MOVE</p>
+        </div>
+        <div class="container-start">
+            <div class="startInfos">
+                <h1>Space Shooter</h1>
+                <h3>How to play ?</h3>
+            </div>
+            <div class="start">
+                <div class="container-controls">
+                    <div class="controls">
+                        <img src="../assets/arrow-keys.png" alt="arrow keys" id="arrow-key">
+                        <p>MOVE</p>
+                    </div>
+                    <div class="controls">
+                        <img src="../assets/space-key.png" alt="space key" id="space-key">
+                        <p id="shoot">SHOOT</p>
+                    </div>
                 </div>
-                <div class="controls">
-                    <img src="../assets/space-key.png" alt="space key" id="space-key">
-                    <p id="shoot">SHOOT</p>
+                <div class="difficulty">
+                    <h3>Select difficulty</h3>
+                    <button id="normal">NORMAL</button>
+                    <button id="hard">HARD</button>
                 </div>
             </div>
         </div>
-        <div class="container-canva">
-            <h1>Space Shooter</h1>
+        <div class="container-canva hide">
             <div style="display: none">
                 <img src="../assets/ship.png" alt="ship" id="ship">
                 <img src="../assets/back1.png" alt="black hole" id="black-hole">
