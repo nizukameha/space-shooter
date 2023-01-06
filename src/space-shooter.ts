@@ -14,7 +14,7 @@ const shotImg = document.querySelector<HTMLImageElement>("#shot");
 
 let health = document.querySelector<HTMLSpanElement>('#health');
 let time = document.querySelector<HTMLSpanElement>('#time');
-let healthCounter: number = 100;
+let healthCounter: number = 3;
 let timeCounterS: number = 0;
 let timeCounterM: number = 0;
 let random = getRandomInt(50, 130);
@@ -25,7 +25,7 @@ let rightPressed: boolean = false;
 let leftPressed: boolean = false;
 let downPressed: boolean = false;
 let upPressed: boolean = false;
-let spacePressed:boolean = false;
+let spacePressed: boolean = false;
 
 
 const spaceShip:SpaceShip = {
@@ -217,7 +217,7 @@ function moveShip() {
         }
         ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
-    if (healthCounter < 0) {
+    if (healthCounter <= 0) {
         alert('GAME OVER');
         document.location.reload();//Restart the game
     }
@@ -226,12 +226,12 @@ function moveShip() {
 function shipShot() {
     if (spacePressed && ctx && shot.image) {
         //FAIRE LE TIR
-        ctx.clearRect(shot.shotX, shot.shotY - 50, shot.shotWidth, shot.shotHeight);
-        ctx.drawImage(shot.image, shot.shotX, shot.shotY - 50, shot.shotWidth, shot.shotHeight);
+        ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
+        ctx.drawImage(shot.image, shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
         shot.shotY -= 15;
     } else {
         if (ctx) {
-            ctx.clearRect(shot.shotX, shot.shotY - 50, shot.shotWidth, shot.shotHeight);
+            ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
             shot.shotY = spaceShip.shipY;
         }
     }
@@ -300,7 +300,6 @@ function generateRandomY() {
     return (randomY)
 }
 
-
 /**
  * Define random value for the Y axis of the ennemie
  */
@@ -317,7 +316,6 @@ function ennemieAxisRandom(enn: any) {
         generateRandomY();
     }
 }
-
 
 /**
  * Detect if there is a collision between the space ship and an ennemie
@@ -347,9 +345,9 @@ function shotDetection(e:any) {
         if (shot.shotX > e[i].ennemieX - (e[i].ennemieWidth / 2) && shot.shotX < e[i].ennemieX + e[i].ennemieWidth) {
             if (shot.shotY > e[i].ennemieY - (e[i].ennemieHeight / 2) && shot.shotY < e[i].ennemieY + e[i].ennemieHeight) {
                 if (ctx) {
-                    console.log('touché');
                     e[i].isTouch = true;
                     ctx.clearRect(e[i].ennemieX, e[i].ennemieY, e[i].ennemieWidth, e[i].ennemieHeight);
+                    ennemieAxisRandom(e[i]);
                 }   
             }
         }
@@ -361,18 +359,12 @@ generateStars();
 init();
 timer();
 
-//FONCTION INIT
-
-
-
 //Display health
 if (health) {
     health.innerHTML = String(healthCounter);
 }
 
 /*
-REVOIR LA GENERATION ALEATOIRE D'ENNEMIES
+REVOIR LA GENERATION ALEATOIRE D'ENNEMIES CAR C'EST LA MERDE
 FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES
-
-Il arrive ausi que le space ship prennent des dégats sans etre en collision avec un ennemi
 */
