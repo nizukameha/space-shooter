@@ -13,7 +13,10 @@ const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
 const shotImg = document.querySelector<HTMLImageElement>("#shot");
 
 let health = document.querySelector<HTMLSpanElement>('#health');
+let time = document.querySelector<HTMLSpanElement>('#time');
 let healthCounter: number = 100;
+let timeCounterS: number = 0;
+let timeCounterM: number = 0;
 let random = getRandomInt(50, 130);
 let randomStar = getRandomInt(50, 150);
 
@@ -164,15 +167,38 @@ function generateStars() {
 }
 
 /**
- * Draw the space ship
+ * Launch the game
  */
-function drawShip() {
-    requestAnimationFrame(drawShip);//draw ship infinite
+function init() {
+    requestAnimationFrame(init);
     collisionDetection(ennemies);
     shipShot();
     shotDetection(ennemies);
     moveEnnemies(ennemies);
     drawEnnemies(ennemies);
+    moveShip();
+};
+
+function timer() {
+    setInterval(() => {
+        if (time && timeCounterS < 60) {
+            timeCounterS++;
+            if (timeCounterM >= 1) {
+                time.innerHTML = String(timeCounterM + ':' + timeCounterS);
+            } else {
+                time.innerHTML = String(timeCounterS);
+            }
+        } else {
+            if (time) {
+                timeCounterS = 0;
+                timeCounterM++;
+                time.innerHTML = String(timeCounterM + ':' + timeCounterS);
+            }
+        }
+    }, 1000)
+}
+
+function moveShip() {
     if (ctx && spaceShip.image && shot.image) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
         if (rightPressed && spaceShip.shipX <= (canvas.width - 50)) {
@@ -189,18 +215,13 @@ function drawShip() {
             spaceShip.shipY += 7;
             shot.shotY += 7;
         }
-
-
-        
-
         ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
     if (healthCounter < 0) {
         alert('GAME OVER');
         document.location.reload();//Restart the game
     }
-};
-
+}
 
 function shipShot() {
     if (spacePressed && ctx && shot.image) {
@@ -220,7 +241,6 @@ function shipShot() {
  * Draw ennemies
  */
 function drawEnnemies(e: any) {
-    
     for (let i = 0; i < ennemies.length; i++) {
         if (ctx && e) {
             ctx.drawImage(e[i].image, e[i].ennemieX, e[i].ennemieY, e[i].ennemieWidth, e[i].ennemieHeight);
@@ -337,18 +357,9 @@ function shotDetection(e:any) {
 }
 
 
-function init() {
-    requestAnimationFrame(init);
-    drawShip()
-    collisionDetection(ennemies);
-    shipShot();
-    shotDetection(ennemies);
-    moveEnnemies(ennemies);
-}
-
-
 generateStars();
-drawShip();
+init();
+timer();
 
 //FONCTION INIT
 
