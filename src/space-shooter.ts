@@ -21,7 +21,7 @@ let shots: any = [];
 let health = document.querySelector<HTMLSpanElement>('#health');
 let time = document.querySelector<HTMLSpanElement>('#time');
 let score = document.querySelector<HTMLSpanElement>('#score');
-let healthCounter: number = 3;
+let healthCounter: number = 100;
 let scoreCounter: number = 0;
 let timeCounterS: number = 0;
 let timeCounterM: number = 0;
@@ -439,7 +439,7 @@ if (score) {
     score.innerHTML = String(scoreCounter);
 }
 /*
-REVOIR LA GENERATION ALEATOIRE D'ENNEMIES SUR L'AXE Y
 FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES
 SpacePressed inutile ??
+PERTE DE VIE FUCK UP
 */
