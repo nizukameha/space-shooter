@@ -5,6 +5,7 @@ const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("my
 const canvaBackground: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvaBackground");
 const ctx = canvas.getContext("2d");
 const ctxBackground = canvaBackground.getContext("2d");
+//DOM
 const containerCanvas = document.querySelector<HTMLDivElement>(".container-canva");
 const containerInfos = document.querySelector<HTMLDivElement>(".container-infos");
 const containerStart = document.querySelector<HTMLDivElement>(".container-start");
@@ -15,11 +16,13 @@ const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
 const shotImg = document.querySelector<HTMLImageElement>("#shot");
 const normal = document.querySelector<HTMLButtonElement>("#normal");
 const hard = document.querySelector<HTMLButtonElement>("#hard");
-
-let shots: any = [];
+let healthBarContainer = document.querySelector<HTMLDivElement>(".healthBar");
 let healthBar = document.querySelector<HTMLDivElement>(".bar");
 let time = document.querySelector<HTMLSpanElement>('#time');
 let score = document.querySelector<HTMLSpanElement>('#score');
+//Array
+let shots: any = [];
+//Number
 let healthCounter: number = 200;
 let scoreCounter: number = 0;
 let timeCounterS: number = 0;
@@ -27,7 +30,6 @@ let timeCounterM: number = 0;
 let random = getRandomInt(50, 100);
 let randomStar = getRandomInt(50, 150);
 let movingEnnemie: number = 5;
-
 //Key pressed
 let rightPressed: boolean = false;
 let leftPressed: boolean = false;
@@ -208,8 +210,11 @@ function timer() {
             }
         }
     }, 1000)
-    if (isHard) {
-        movingEnnemie += 8;
+    if (isHard && healthBar && healthBarContainer) {
+        movingEnnemie += 7;
+        healthCounter = 100;
+        healthBarContainer.classList.add('hardBar');
+        healthBar.style.width = String(healthCounter) + 'px';
     }
 }
 
@@ -217,14 +222,14 @@ function moveShip() {
     if (ctx && spaceShip.image && shot.image) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
         if (rightPressed && spaceShip.shipX <= (canvas.width - 50)) {
-            spaceShip.shipX += 7;
+            spaceShip.shipX += 8;
         } else if (leftPressed && spaceShip.shipX > 0) {
-            spaceShip.shipX -= 7;
+            spaceShip.shipX -= 8;
         }
         if (upPressed && spaceShip.shipY > 0) {
-            spaceShip.shipY -= 7;
+            spaceShip.shipY -= 8;
         } else if (downPressed && spaceShip.shipY <= (canvas.height - 60)) {
-            spaceShip.shipY += 7;
+            spaceShip.shipY += 8;
         }
         ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
@@ -359,11 +364,19 @@ function collisionDetection(e: any) {
         if (spaceShip.shipX > e[i].ennemieX - (e[i].ennemieWidth / 2) && spaceShip.shipX < e[i].ennemieX + e[i].ennemieWidth) {// - (e[i].ennemieWidth / 2) car x est situé au centre de l'objet
             if (spaceShip.shipY > e[i].ennemieY - (e[i].ennemieHeight / 2) && spaceShip.shipY < e[i].ennemieY + e[i].ennemieHeight) {
                 healthCounter--;
-                if (healthBar) {
+                if (healthBar && !isHard) {
                     healthBar.style.width = String(healthCounter) + 'px';
-                    if (healthCounter > 50 && healthCounter <= 100) {
+                    if (healthCounter > 35 && healthCounter <= 75) {
                         healthBar.style.backgroundColor = 'orange';
-                    } else if (healthCounter <= 50) {
+                    } else if (healthCounter <= 35) {
+                        healthBar.style.backgroundColor = 'red';
+                    }
+                } else if (healthBar && healthBarContainer && isHard) {
+                    healthBarContainer.classList.add('hardBar');
+                    healthBar.style.width = String(healthCounter) + 'px';
+                    if (healthCounter > 25 && healthCounter <= 50) {
+                        healthBar.style.backgroundColor = 'orange';
+                    } else if (healthCounter <= 25) {
                         healthBar.style.backgroundColor = 'red';
                     }
                 }
@@ -428,10 +441,4 @@ if (score) {
 }
 /*
 FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES
-SpacePressed inutile ??
-PERTE DE VIE FUCK UP
 */
-
-
-
-

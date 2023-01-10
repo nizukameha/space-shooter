@@ -129,3 +129,6 @@ button:hover {
     background-color: green;
     border: 1px solid white;
 }
+.hardBar {
+    width: 100px;
+}
