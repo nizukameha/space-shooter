@@ -1,6 +1,5 @@
 //Interface
 import { SpaceShip, Ennemies } from "./entities";
-
 //Game level
 const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("myCanvas");
 const canvaBackground: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvaBackground");
@@ -17,12 +16,16 @@ const shotImg = document.querySelector<HTMLImageElement>("#shot");
 const normal = document.querySelector<HTMLButtonElement>("#normal");
 const hard = document.querySelector<HTMLButtonElement>("#hard");
 
+let shots: any = [];
+
 let health = document.querySelector<HTMLSpanElement>('#health');
 let time = document.querySelector<HTMLSpanElement>('#time');
+let score = document.querySelector<HTMLSpanElement>('#score');
 let healthCounter: number = 3;
+let scoreCounter: number = 0;
 let timeCounterS: number = 0;
 let timeCounterM: number = 0;
-let random = getRandomInt(50, 130);
+let random = getRandomInt(50, 100);
 let randomStar = getRandomInt(50, 150);
 let movingEnnemie: number = 5;
 
@@ -34,7 +37,7 @@ let upPressed: boolean = false;
 let spacePressed: boolean = false;
 let isHard: boolean = false;
 
-const spaceShip:SpaceShip = {
+const spaceShip: SpaceShip = {
     image: ship,
     shipX: 225,
     shipY: 640,
@@ -50,7 +53,7 @@ const shot = {
     shotHeight: 40
 }
 
-const bHole:Ennemies = {
+const bHole: Ennemies = {
     image: blackHole,
     ennemieX: 0,
     ennemieY: 0,
@@ -59,7 +62,7 @@ const bHole:Ennemies = {
     isTouch: false
 }
 
-const gala:Ennemies = {
+const gala: Ennemies = {
     image: galaxy,
     ennemieX: 0,
     ennemieY: 0,
@@ -68,7 +71,7 @@ const gala:Ennemies = {
     isTouch: false
 }
 
-const rPlanet:Ennemies = {
+const rPlanet: Ennemies = {
     image: redPlanet,
     ennemieX: 0,
     ennemieY: 0,
@@ -79,11 +82,6 @@ const rPlanet:Ennemies = {
 
 //Array of ennemies
 let ennemies = [bHole, gala, rPlanet];
-
-//Generate ennemies first time
-for (let i = 0; i < ennemies.length; i++) {
-    ennemieAxisRandom(ennemies[i]);
-}
 
 //If a key is pressed a function is called
 document.addEventListener("keydown", (event) => {
@@ -123,6 +121,14 @@ document.addEventListener("keyup", (event) => {
 document.addEventListener("keydown", (event) => {
     if (event.code == "Space") {
         spacePressed = true;
+        // const shot = {
+        //     image: shotImg,
+        //     shotX: spaceShip.shipX,
+        //     shotY: spaceShip.shipY,
+        //     shotWidth: 40,
+        //     shotHeight: 40
+        // }
+        // shots.push(shot);
     }
 
 });
@@ -212,17 +218,13 @@ function moveShip() {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
         if (rightPressed && spaceShip.shipX <= (canvas.width - 50)) {
             spaceShip.shipX += 7;
-            shot.shotX += 5;
         } else if (leftPressed && spaceShip.shipX > 0) {
             spaceShip.shipX -= 7;
-            shot.shotX -= 5;
         }
         if (upPressed && spaceShip.shipY > 0) {
             spaceShip.shipY -= 7;
-            shot.shotY -= 5;
         } else if (downPressed && spaceShip.shipY <= (canvas.height - 60)) {
             spaceShip.shipY += 7;
-            shot.shotY += 5;
         }
         ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
@@ -236,16 +238,30 @@ function moveShip() {
  * Shot of the ship
  */
 function shipShot() {
-    if (spacePressed && ctx && shot.image) {
-        ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
-        ctx.drawImage(shot.image, shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
-        shot.shotY -= 15;
-    } else {
-        if (ctx) {
+    //for (let i = 0; i < shots.length; i++) {
+        if (spacePressed && ctx && shot.image) {
             ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
-            shot.shotY = spaceShip.shipY;
+            ctx.drawImage(shot.image, shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
+            shot.shotY -= 15;
+
+            // ctx.clearRect(shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
+            // ctx.drawImage(shots[i].image, shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
+            // shots[i].shotY -= 15;
+            // if (shots[i].shotY >= canvas.height) {
+                
+            // }
+        } else {
+            if (ctx) {
+                // ctx.clearRect(shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
+                // shots[i].shotY = spaceShip.shipY;
+                // shots[i].shotX = spaceShip.shipX;
+
+                ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
+                shot.shotY = spaceShip.shipY;
+                shot.shotX = spaceShip.shipX;
+            }
         }
-    }
+    //}
 }
 
 /**
@@ -271,7 +287,7 @@ function moveEnnemies(en: any) {
             } else {
                 en[i].isTouch = false;
                 ennemieAxisRandom(en[i]);
-                random = Math.trunc(getRandomInt(50, 130));
+                random = Math.trunc(getRandomInt(50, 100));
                 en[i].ennemieWidth = random;
                 en[i].ennemieHeight = random;
             }
@@ -285,11 +301,17 @@ function moveEnnemies(en: any) {
  */
 function generateRandomX() {
     let randomX = [];
-    let intervalMin = -64;
-    let intervalMax = (Math.trunc((canvas.width) / ennemies.length));
+    //let intervalMin = -64;
+    //let intervalMax = (Math.trunc((canvas.width) / ennemies.length));
+
+    let interval = (Math.trunc((canvas.width) / (ennemies.length + 2)));
+    let intervalMin = 0;
     for (let i = 0; i < ennemies.length; i++) {
-        randomX[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMax / 2));
-        intervalMax += intervalMax;
+        //randomX[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMax / 2));
+        //intervalMax += intervalMax;
+        randomX[i] = Math.trunc(getRandomInt(intervalMin, intervalMin + interval));
+
+        intervalMin += interval * 2;
     }
     randomX.sort(() => 0.5 - Math.random());
     return (randomX)
@@ -301,12 +323,16 @@ function generateRandomX() {
  */
 function generateRandomY() {
     let randomY = [];
-    let intervalMin = -783;
-    let intervalMax = (Math.trunc((canvas.height) / ennemies.length - 150));
-    for (let i = 0; i < ennemies.length; i++) {
-        randomY[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMin + intervalMax * 2));
-        intervalMax += intervalMax;
-    }
+    //let intervalMin = -783;
+    //let intervalMax = (Math.trunc((canvas.height) / ennemies.length - 150));
+    let interval = (Math.trunc((canvas.height) / (ennemies.length + 2)));
+    let intervalMin = 0;
+    //for (let i = 0; i < ennemies.length; i++) {
+    //randomY[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMin + intervalMax * 2));
+    //intervalMax += intervalMax;
+    randomY.push(Math.trunc(getRandomInt(intervalMin, intervalMin + interval)));
+    intervalMin += interval * 2;
+    //}
     randomY.sort(() => 0.5 - Math.random());
     return (randomY)
 }
@@ -322,7 +348,7 @@ function ennemieAxisRandom(enn: any) {
         enn.ennemieX = Number(randomX.splice(i, 1));
         enn.ennemieY = Number(randomY.splice(i, 1))
     }
-    if (randomX.length == 0 && randomY.length == 0) {
+    if (!randomX.length && !randomY.length) {
         generateRandomX();
         generateRandomY();
     }
@@ -348,10 +374,10 @@ function collisionDetection(e: any) {
             }
         }
     }
-    
+
 }
 
-function shotDetection(e:any) {
+function shotDetection(e: any) {
     for (let i = 0; i < e.length; i++) {
         if (shot.shotX > e[i].ennemieX - (e[i].ennemieWidth / 2) && shot.shotX < e[i].ennemieX + e[i].ennemieWidth) {
             if (shot.shotY > e[i].ennemieY - (e[i].ennemieHeight / 2) && shot.shotY < e[i].ennemieY + e[i].ennemieHeight) {
@@ -359,7 +385,12 @@ function shotDetection(e:any) {
                     e[i].isTouch = true;
                     ctx.clearRect(e[i].ennemieX, e[i].ennemieY, e[i].ennemieWidth, e[i].ennemieHeight);
                     ennemieAxisRandom(e[i]);
-                }   
+                    //score
+                    if (score) {
+                        score.innerHTML = String(scoreCounter);
+                    }
+                    scoreCounter += 10;
+                }
             }
         }
     }
@@ -396,7 +427,9 @@ generateStars();
 if (health) {
     health.innerHTML = String(healthCounter);
 }
-
+if (score) {
+    score.innerHTML = String(scoreCounter);
+}
 /*
 REVOIR LA GENERATION ALEATOIRE D'ENNEMIES CAR C'EST LA MERDE
 FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES
