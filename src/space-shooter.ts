@@ -73,7 +73,7 @@ const gala: Ennemies = {
 
 const rPlanet: Ennemies = {
     image: redPlanet,
-    ennemieX: 0,
+    ennemieX: 50,
     ennemieY: 0,
     ennemieWidth: random,
     ennemieHeight: random,
@@ -82,6 +82,14 @@ const rPlanet: Ennemies = {
 
 //Array of ennemies
 let ennemies = [bHole, gala, rPlanet];
+
+let randomX = generateRandomX();
+let randomY = generateRandomY();
+
+//First random generation of ennemies
+for (const iterator of ennemies) {
+    ennemieAxisRandom(iterator);
+}
 
 //If a key is pressed a function is called
 document.addEventListener("keydown", (event) => {
@@ -121,14 +129,14 @@ document.addEventListener("keyup", (event) => {
 document.addEventListener("keydown", (event) => {
     if (event.code == "Space") {
         spacePressed = true;
-        // const shot = {
-        //     image: shotImg,
-        //     shotX: spaceShip.shipX,
-        //     shotY: spaceShip.shipY,
-        //     shotWidth: 40,
-        //     shotHeight: 40
-        // }
-        // shots.push(shot);
+        const shot = {
+            image: shotImg,
+            shotX: spaceShip.shipX,
+            shotY: spaceShip.shipY,
+            shotWidth: 40,
+            shotHeight: 40
+        }
+        shots.push(shot);
     }
 
 });
@@ -185,7 +193,7 @@ function init() {
     requestAnimationFrame(init);
     collisionDetection(ennemies);
     shipShot();
-    shotDetection(ennemies);
+    shotDetection(ennemies, shots);
     moveEnnemies(ennemies);
     drawEnnemies(ennemies);
     moveShip();
@@ -238,30 +246,29 @@ function moveShip() {
  * Shot of the ship
  */
 function shipShot() {
-    //for (let i = 0; i < shots.length; i++) {
-        if (spacePressed && ctx && shot.image) {
-            ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
-            ctx.drawImage(shot.image, shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
-            shot.shotY -= 15;
+    for (let i = 0; i < shots.length; i++) {
+        if (ctx && shot.image) {
+            // ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
+            // ctx.drawImage(shot.image, shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
+            
+            // shot.shotY -= 15;
 
-            // ctx.clearRect(shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
-            // ctx.drawImage(shots[i].image, shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
-            // shots[i].shotY -= 15;
-            // if (shots[i].shotY >= canvas.height) {
-                
-            // }
+            ctx.clearRect(shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
+            ctx.drawImage(shots[i].image, shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
+            shots[i].shotY -= 15;
+            
         } else {
             if (ctx) {
-                // ctx.clearRect(shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
-                // shots[i].shotY = spaceShip.shipY;
-                // shots[i].shotX = spaceShip.shipX;
+                ctx.clearRect(shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
+                shots[i].shotY = spaceShip.shipY;
+                shots[i].shotX = spaceShip.shipX;
 
-                ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
-                shot.shotY = spaceShip.shipY;
-                shot.shotX = spaceShip.shipX;
+                // ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
+                // shot.shotY = spaceShip.shipY;
+                // shot.shotX = spaceShip.shipX;
             }
         }
-    //}
+    }
 }
 
 /**
@@ -310,7 +317,7 @@ function generateRandomX() {
         //randomX[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMax / 2));
         //intervalMax += intervalMax;
         randomX[i] = Math.trunc(getRandomInt(intervalMin, intervalMin + interval));
-
+        
         intervalMin += interval * 2;
     }
     randomX.sort(() => 0.5 - Math.random());
@@ -327,12 +334,12 @@ function generateRandomY() {
     //let intervalMax = (Math.trunc((canvas.height) / ennemies.length - 150));
     let interval = (Math.trunc((canvas.height) / (ennemies.length + 2)));
     let intervalMin = 0;
-    //for (let i = 0; i < ennemies.length; i++) {
+    for (let i = 0; i < ennemies.length; i++) {
     //randomY[i] = Math.trunc(getRandomInt(intervalMin + intervalMax, intervalMin + intervalMax * 2));
     //intervalMax += intervalMax;
-    randomY.push(Math.trunc(getRandomInt(intervalMin, intervalMin + interval)));
+    randomY.push(Math.trunc(getRandomInt(intervalMin * -1, (intervalMin + interval) * -1)));
     intervalMin += interval * 2;
-    //}
+    }
     randomY.sort(() => 0.5 - Math.random());
     return (randomY)
 }
@@ -341,17 +348,14 @@ function generateRandomY() {
  * Define random value for the Y axis of the ennemie
  */
 function ennemieAxisRandom(enn: any) {
-    let randomX = generateRandomX();
-    let randomY = generateRandomY();
-    for (let i = 0; i < randomX.length; i++) {
         //ennemies[i].ennemieX = randomX[i];
-        enn.ennemieX = Number(randomX.splice(i, 1));
-        enn.ennemieY = Number(randomY.splice(i, 1))
-    }
-    if (!randomX.length && !randomY.length) {
-        generateRandomX();
-        generateRandomY();
-    }
+        if (randomX.length == 0 && randomY.length == 0) {
+            randomX = generateRandomX();
+            randomY = generateRandomY();
+        }
+        enn.ennemieX = Number(randomX.pop());
+        enn.ennemieY = Number(randomY.pop())
+    
 }
 
 /**
@@ -377,19 +381,25 @@ function collisionDetection(e: any) {
 
 }
 
-function shotDetection(e: any) {
-    for (let i = 0; i < e.length; i++) {
-        if (shot.shotX > e[i].ennemieX - (e[i].ennemieWidth / 2) && shot.shotX < e[i].ennemieX + e[i].ennemieWidth) {
-            if (shot.shotY > e[i].ennemieY - (e[i].ennemieHeight / 2) && shot.shotY < e[i].ennemieY + e[i].ennemieHeight) {
-                if (ctx) {
-                    e[i].isTouch = true;
-                    ctx.clearRect(e[i].ennemieX, e[i].ennemieY, e[i].ennemieWidth, e[i].ennemieHeight);
-                    ennemieAxisRandom(e[i]);
-                    //score
-                    if (score) {
-                        score.innerHTML = String(scoreCounter);
+/**
+ * Detect if there is a collision between the shot ship and an ennemie
+ * @param e ennemies
+ */
+function shotDetection(e: any, shots:any) {
+    for (let i = 0; i < shots.length; i++) {
+        for (let j = 0; j < e.length; j++) {
+            if (shots[i].shotX > e[j].ennemieX - (e[j].ennemieWidth / 2) && shots[i].shotX < e[j].ennemieX + e[j].ennemieWidth) {
+                if (shots[i].shotY > e[j].ennemieY - (e[j].ennemieHeight / 2) && shots[i].shotY < e[j].ennemieY + e[j].ennemieHeight) {
+                    if (ctx) {
+                        e[j].isTouch = true;
+                        ctx.clearRect(e[j].ennemieX, e[j].ennemieY, e[j].ennemieWidth, e[j].ennemieHeight);
+                        ennemieAxisRandom(e[j]);
+                        //score
+                        if (score) {
+                            score.innerHTML = String(scoreCounter);
+                        }
+                        scoreCounter += 10;
                     }
-                    scoreCounter += 10;
                 }
             }
         }
@@ -420,8 +430,6 @@ hard?.addEventListener('click', () => {
 })
 
 generateStars();
-//init();
-//timer();
 
 //Display health
 if (health) {
@@ -431,8 +439,7 @@ if (score) {
     score.innerHTML = String(scoreCounter);
 }
 /*
-REVOIR LA GENERATION ALEATOIRE D'ENNEMIES CAR C'EST LA MERDE
+REVOIR LA GENERATION ALEATOIRE D'ENNEMIES SUR L'AXE Y
 FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES
-LA PERTE DE VIE EST ACCELEREE QUAND LE JEU VA PLUS VITE
-AJUSTER LE TIR (NE PAS RESTER APPUYER POUR TIRER)
+SpacePressed inutile ??
 */
