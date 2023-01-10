@@ -17,11 +17,10 @@ const normal = document.querySelector<HTMLButtonElement>("#normal");
 const hard = document.querySelector<HTMLButtonElement>("#hard");
 
 let shots: any = [];
-
-let health = document.querySelector<HTMLSpanElement>('#health');
+let healthBar = document.querySelector<HTMLDivElement>(".bar");
 let time = document.querySelector<HTMLSpanElement>('#time');
 let score = document.querySelector<HTMLSpanElement>('#score');
-let healthCounter: number = 100;
+let healthCounter: number = 200;
 let scoreCounter: number = 0;
 let timeCounterS: number = 0;
 let timeCounterM: number = 0;
@@ -128,7 +127,6 @@ document.addEventListener("keyup", (event) => {
 });
 document.addEventListener("keydown", (event) => {
     if (event.code == "Space") {
-        spacePressed = true;
         const shot = {
             image: shotImg,
             shotX: spaceShip.shipX,
@@ -137,12 +135,6 @@ document.addEventListener("keydown", (event) => {
             shotHeight: 40
         }
         shots.push(shot);
-    }
-
-});
-document.addEventListener("keyup", (event) => {
-    if (event.code == "Space") {
-        spacePressed = false;
     }
 });
 
@@ -367,13 +359,13 @@ function collisionDetection(e: any) {
         if (spaceShip.shipX > e[i].ennemieX - (e[i].ennemieWidth / 2) && spaceShip.shipX < e[i].ennemieX + e[i].ennemieWidth) {// - (e[i].ennemieWidth / 2) car x est situé au centre de l'objet
             if (spaceShip.shipY > e[i].ennemieY - (e[i].ennemieHeight / 2) && spaceShip.shipY < e[i].ennemieY + e[i].ennemieHeight) {
                 healthCounter--;
-                if (health) {
-                    health.innerHTML = String(healthCounter);
-                    health.style.color = 'red';
-                }
-            } else {
-                if (health) {
-                    health.style.color = 'white';
+                if (healthBar) {
+                    healthBar.style.width = String(healthCounter) + 'px';
+                    if (healthCounter > 50 && healthCounter <= 100) {
+                        healthBar.style.backgroundColor = 'orange';
+                    } else if (healthCounter <= 50) {
+                        healthBar.style.backgroundColor = 'red';
+                    }
                 }
             }
         }
@@ -431,10 +423,6 @@ hard?.addEventListener('click', () => {
 
 generateStars();
 
-//Display health
-if (health) {
-    health.innerHTML = String(healthCounter);
-}
 if (score) {
     score.innerHTML = String(scoreCounter);
 }
@@ -443,3 +431,7 @@ FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJO
 SpacePressed inutile ??
 PERTE DE VIE FUCK UP
 */
+
+
+
+

@@ -117,3 +117,15 @@ button:hover {
     display: flex;
     flex-direction: column;
 }
+.healthBar {
+    width: 200px;
+    height: 15px;
+    background-color: grey;
+    margin-left: 10%;
+}
+.bar {
+    width: 200px;
+    height: 15px;
+    background-color: green;
+    border: 1px solid white;
+}
