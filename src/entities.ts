@@ -15,4 +15,13 @@ interface SpaceShip {
     shipHeight: number
 }
 
-export { SpaceShip, Ennemies };
+interface Bonus {
+    image: HTMLImageElement | null,
+    bonusX: number,
+    bonusY: number,
+    bonusWidth: number,
+    bonusHeight: number,
+    isTouch: boolean
+}
+
+export { SpaceShip, Ennemies, Bonus };
