@@ -1,5 +1,14 @@
 //Interface
-import { SpaceShip, Ennemies } from "./entities";
+import { SpaceShip, Ennemies, Bonus } from "./entities";
+import ammo8 from '../assets/ammo8.png';
+import ammo7 from '../assets/ammo7.png';
+import ammo6 from '../assets/ammo6.png';
+import ammo5 from '../assets/ammo5.png';
+import ammo4 from '../assets/ammo4.png';
+import ammo3 from '../assets/ammo3.png';
+import ammo2 from '../assets/ammo2.png';
+import ammo1 from '../assets/ammo1.png';
+import ammo0 from '../assets/ammo0.png';
 //Game level
 const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("myCanvas");
 const canvaBackground: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvaBackground");
@@ -14,17 +23,20 @@ const blackHole = document.querySelector<HTMLImageElement>("#black-hole");
 const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
 const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
 const shotImg = document.querySelector<HTMLImageElement>("#shot");
+const ammoMax = document.querySelector<HTMLImageElement>("#ammoMax");
 const normal = document.querySelector<HTMLButtonElement>("#normal");
 const hard = document.querySelector<HTMLButtonElement>("#hard");
 let healthBarContainer = document.querySelector<HTMLDivElement>(".healthBar");
 let healthBar = document.querySelector<HTMLDivElement>(".bar");
 let time = document.querySelector<HTMLSpanElement>('#time');
 let score = document.querySelector<HTMLSpanElement>('#score');
+let ammo = document.querySelector<HTMLImageElement>('#ammo');
 //Array
 let shots: any = [];
 //Number
 let healthCounter: number = 200;
 let scoreCounter: number = 0;
+let ammoCounter: number = 8;
 let timeCounterS: number = 0;
 let timeCounterM: number = 0;
 let random = getRandomInt(50, 100);
@@ -35,7 +47,6 @@ let rightPressed: boolean = false;
 let leftPressed: boolean = false;
 let downPressed: boolean = false;
 let upPressed: boolean = false;
-let spacePressed: boolean = false;
 let isHard: boolean = false;
 
 const spaceShip: SpaceShip = {
@@ -81,8 +92,19 @@ const rPlanet: Ennemies = {
     isTouch: false
 }
 
+const ammoBonus:Bonus = {
+    image: ammoMax,
+    bonusX: 50,
+    bonusY: 0,
+    bonusWidth: 30,
+    bonusHeight: 30,
+    isTouch: false
+}
+
 //Array of ennemies
 let ennemies = [bHole, gala, rPlanet];
+
+let bonus = [ammoBonus];
 
 let randomX = generateRandomX();
 let randomY = generateRandomY();
@@ -92,6 +114,13 @@ for (const iterator of ennemies) {
     ennemieAxisRandom(iterator);
 }
 
+setInterval(() => {
+    for (const iterator of bonus) {
+        iterator.isTouch = false;
+        bonusAxisRandom(iterator);
+    }
+}, 10000);
+    
 //If a key is pressed a function is called
 document.addEventListener("keydown", (event) => {
     if (event.key == "Right" || event.key == "ArrowRight") {
@@ -128,7 +157,8 @@ document.addEventListener("keyup", (event) => {
     }
 });
 document.addEventListener("keydown", (event) => {
-    if (event.code == "Space") {
+    // On peux limiter les tirs avecv la taille du tableau
+    if (event.code == "Space" && shots.length < 8) {
         const shot = {
             image: shotImg,
             shotX: spaceShip.shipX,
@@ -136,9 +166,41 @@ document.addEventListener("keydown", (event) => {
             shotWidth: 40,
             shotHeight: 40
         }
-        shots.push(shot);
+        if (ammo) {
+            ammoCounter--;
+            switch (ammoCounter) {
+                case 7 :
+                    ammo.src = ammo7;
+                    break;
+                case 6 :
+                    ammo.src = ammo6;
+                    break;
+                case 5 :
+                    ammo.src = ammo5;
+                    break;
+                case 4 :
+                    ammo.src = ammo4;
+                    break;
+                case 3 :
+                    ammo.src = ammo3;
+                    break;
+                case 2 :
+                    ammo.src = ammo2;
+                    break;
+                case 1 :
+                    ammo.src = ammo1;
+                    break;
+                case 0 :
+                    ammo.src = ammo0;
+                    break;
+            }
+            
+        }
+        shots.push(shot); 
     }
 });
+
+//shots.splice(0, shots.length);
 
 /**
  * Draw stars
@@ -188,8 +250,19 @@ function init() {
     collisionDetection(ennemies);
     shipShot();
     shotDetection(ennemies, shots);
+    bonusCollisionDetection(bonus);
     moveEnnemies(ennemies);
     drawEnnemies(ennemies);
+    for (const iterator of bonus) {
+        if (iterator.isTouch == false) {
+            moveBonus(bonus)
+            drawBonus(bonus);
+        } else {
+            if (ctx) {
+                ctx.clearRect(iterator.bonusX, iterator.bonusY, iterator.bonusWidth, iterator.bonusHeight);
+            }
+        }
+    }
     moveShip();
 };
 
@@ -245,24 +318,15 @@ function moveShip() {
 function shipShot() {
     for (let i = 0; i < shots.length; i++) {
         if (ctx && shot.image) {
-            // ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
-            // ctx.drawImage(shot.image, shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
-            
-            // shot.shotY -= 15;
-
             ctx.clearRect(shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
             ctx.drawImage(shots[i].image, shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
-            shots[i].shotY -= 15;
-            
+            shots[i].shotY -= 15; 
         } else {
             if (ctx) {
                 ctx.clearRect(shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
                 shots[i].shotY = spaceShip.shipY;
                 shots[i].shotX = spaceShip.shipX;
-
-                // ctx.clearRect(shot.shotX, shot.shotY, shot.shotWidth, shot.shotHeight);
-                // shot.shotY = spaceShip.shipY;
-                // shot.shotX = spaceShip.shipX;
+                
             }
         }
     }
@@ -278,6 +342,31 @@ function drawEnnemies(e: any) {
         }
     }
 };
+
+/**
+ * Draw bonus
+ */
+function drawBonus(b: any) {
+    for (let i = 0; i < bonus.length; i++) {
+        if (ctx && b) {
+            ctx.drawImage(b[i].image, b[i].bonusX, b[i].bonusY, b[i].bonusWidth, b[i].bonusHeight);
+        }
+    }
+};
+
+/**
+ * Move bonus on Y axis
+ */
+function moveBonus(b: any) {
+    if (ctx) {
+        for (let i = 0; i < bonus.length; i++) {
+            ctx.clearRect(b[i].bonusX, b[i].bonusY, b[i].bonusWidth, b[i].bonusHeight);
+            if (b[i].bonusY <= canvas.height) {
+                b[i].bonusY += movingEnnemie;
+            }
+        }
+    }
+}
 
 /**
  * Move ennemies on Y axis
@@ -345,7 +434,6 @@ function generateRandomY() {
  * Define random value for the Y axis of the ennemie
  */
 function ennemieAxisRandom(enn: any) {
-        //ennemies[i].ennemieX = randomX[i];
         if (randomX.length == 0 && randomY.length == 0) {
             randomX = generateRandomX();
             randomY = generateRandomY();
@@ -353,6 +441,16 @@ function ennemieAxisRandom(enn: any) {
         enn.ennemieX = Number(randomX.pop());
         enn.ennemieY = Number(randomY.pop())
     
+}
+
+
+function bonusAxisRandom(b:any) {
+    if (randomX.length == 0 && randomY.length == 0) {
+        randomX = generateRandomX();
+        randomY = generateRandomY();
+    }
+    b.bonusX = Number(randomX.pop());
+    b.bonusY = Number(randomY.pop())
 }
 
 /**
@@ -386,6 +484,28 @@ function collisionDetection(e: any) {
 
 }
 
+
+/**
+ * Detect if there is a collision between the space ship and an ennemie
+ * @param e event
+ */
+function bonusCollisionDetection(b: any) {
+    for (let i = 0; i < b.length; i++) {
+        if (spaceShip.shipX > b[i].bonusX - (b[i].bonusWidth / 2) && spaceShip.shipX < b[i].bonusX + b[i].bonusWidth) {
+            if (spaceShip.shipY > b[i].bonusY - (b[i].bonusHeight / 2) && spaceShip.shipY < b[i].bonusY + b[i].bonusHeight) {
+                b[i].isTouch = true;
+                shots.splice(0, 8); 
+                ammoCounter = 8;
+                if (ammo) {
+                    ammo.src = ammo8;
+                }
+            }
+        }
+    }
+}
+
+
+
 /**
  * Detect if there is a collision between the shot ship and an ennemie
  * @param e ennemies
@@ -399,7 +519,6 @@ function shotDetection(e: any, shots:any) {
                         e[j].isTouch = true;
                         ctx.clearRect(e[j].ennemieX, e[j].ennemieY, e[j].ennemieWidth, e[j].ennemieHeight);
                         ennemieAxisRandom(e[j]);
-                        //score
                         if (score) {
                             score.innerHTML = String(scoreCounter);
                         }
@@ -439,6 +558,10 @@ generateStars();
 if (score) {
     score.innerHTML = String(scoreCounter);
 }
+if (ammo) {
+    ammo.innerHTML = String(ammoCounter);
+}
 /*
 FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES
+GENERATION ITEM ALEATOIRE POUR VIE ET AMMO
 */
