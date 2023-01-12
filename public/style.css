@@ -145,6 +145,6 @@ button:hover {
 .gameOver {
     z-index: 5;
     position: absolute;
-    left: 43vw;
-    top: 45vh;
+    margin-top: 44vh;
+    margin-left: 44vw;
 }
