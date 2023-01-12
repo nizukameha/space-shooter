@@ -269,12 +269,13 @@ function init() {
     }
 };
 
+
+
 /**
  * Timer
  */
 function timer() {
     if (isGameOver == false) {
-        setInterval(() => {
             if (time && timeCounterS < 60) {
                 timeCounterS++;
                 if (timeCounterM >= 1) {
@@ -289,13 +290,14 @@ function timer() {
                     time.innerHTML = String(timeCounterM + ':' + timeCounterS);
                 }
             }
-        }, 1000)
         if (isHard && healthBar && healthBarContainer) {
             movingEnnemie += 7;
             healthCounter = 100;
             healthBarContainer.classList.add('hardBar');
             healthBar.style.width = String(healthCounter) + 'px';
         }
+    } else {
+        clearInterval(timerInterval);
     }
 }
 
@@ -320,9 +322,6 @@ function moveShip() {
     if (healthCounter <= 0) {
         isGameOver = true;
         gameOver?.classList.remove('hide');
-        // setTimeout(() => {
-        //     document.location.reload();
-        // });
     }
 }
 
@@ -547,6 +546,7 @@ normal?.addEventListener('click', () => {
     if (containerStart) {
         containerStart.style.display = 'none';
     }
+    let timerInterval = setInterval(timer, 1000);
     generateStars();
     init();
     timer();
@@ -559,6 +559,7 @@ hard?.addEventListener('click', () => {
         containerStart.style.display = 'none';
     }
     isHard = true;
+    let timerInterval = setInterval(timer, 1000);
     generateStars();
     init();
     timer();
