@@ -132,3 +132,8 @@ button:hover {
 .hardBar {
     width: 100px;
 }
+#ammo {
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 180px;
+}
