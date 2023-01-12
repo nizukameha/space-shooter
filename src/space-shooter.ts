@@ -18,6 +18,7 @@ const ctxBackground = canvaBackground.getContext("2d");
 const containerCanvas = document.querySelector<HTMLDivElement>(".container-canva");
 const containerInfos = document.querySelector<HTMLDivElement>(".container-infos");
 const containerStart = document.querySelector<HTMLDivElement>(".container-start");
+const gameOver = document.querySelector<HTMLDivElement>(".gameOver");
 const ship = document.querySelector<HTMLImageElement>("#ship");
 const blackHole = document.querySelector<HTMLImageElement>("#black-hole");
 const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
@@ -48,6 +49,7 @@ let leftPressed: boolean = false;
 let downPressed: boolean = false;
 let upPressed: boolean = false;
 let isHard: boolean = false;
+let isGameOver: boolean = false;
 
 const spaceShip: SpaceShip = {
     image: ship,
@@ -114,6 +116,7 @@ for (const iterator of ennemies) {
     ennemieAxisRandom(iterator);
 }
 
+//Generation of bonus item
 setInterval(() => {
     for (const iterator of bonus) {
         iterator.isTouch = false;
@@ -200,8 +203,6 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-//shots.splice(0, shots.length);
-
 /**
  * Draw stars
  */
@@ -247,50 +248,60 @@ function generateStars() {
  */
 function init() {
     requestAnimationFrame(init);
-    collisionDetection(ennemies);
-    shipShot();
-    shotDetection(ennemies, shots);
-    bonusCollisionDetection(bonus);
-    moveEnnemies(ennemies);
-    drawEnnemies(ennemies);
-    for (const iterator of bonus) {
-        if (iterator.isTouch == false) {
-            moveBonus(bonus)
-            drawBonus(bonus);
-        } else {
-            if (ctx) {
-                ctx.clearRect(iterator.bonusX, iterator.bonusY, iterator.bonusWidth, iterator.bonusHeight);
+    if (isGameOver == false) {
+        collisionDetection(ennemies);
+        shipShot();
+        shotDetection(ennemies, shots);
+        bonusCollisionDetection(bonus);
+        moveEnnemies(ennemies);
+        drawEnnemies(ennemies);
+        moveShip();
+        for (const iterator of bonus) {
+            if (iterator.isTouch == false) {
+                moveBonus(bonus)
+                drawBonus(bonus);
+            } else {
+                if (ctx) {
+                    ctx.clearRect(iterator.bonusX, iterator.bonusY, iterator.bonusWidth, iterator.bonusHeight);
+                }
             }
         }
     }
-    moveShip();
 };
 
+/**
+ * Timer
+ */
 function timer() {
-    setInterval(() => {
-        if (time && timeCounterS < 60) {
-            timeCounterS++;
-            if (timeCounterM >= 1) {
-                time.innerHTML = String(timeCounterM + ':' + timeCounterS);
+    if (isGameOver == false) {
+        setInterval(() => {
+            if (time && timeCounterS < 60) {
+                timeCounterS++;
+                if (timeCounterM >= 1) {
+                    time.innerHTML = String(timeCounterM + ':' + timeCounterS);
+                } else {
+                    time.innerHTML = String(timeCounterS);
+                }
             } else {
-                time.innerHTML = String(timeCounterS);
+                if (time) {
+                    timeCounterS = 0;
+                    timeCounterM++;
+                    time.innerHTML = String(timeCounterM + ':' + timeCounterS);
+                }
             }
-        } else {
-            if (time) {
-                timeCounterS = 0;
-                timeCounterM++;
-                time.innerHTML = String(timeCounterM + ':' + timeCounterS);
-            }
+        }, 1000)
+        if (isHard && healthBar && healthBarContainer) {
+            movingEnnemie += 7;
+            healthCounter = 100;
+            healthBarContainer.classList.add('hardBar');
+            healthBar.style.width = String(healthCounter) + 'px';
         }
-    }, 1000)
-    if (isHard && healthBar && healthBarContainer) {
-        movingEnnemie += 7;
-        healthCounter = 100;
-        healthBarContainer.classList.add('hardBar');
-        healthBar.style.width = String(healthCounter) + 'px';
     }
 }
 
+/**
+ * Move the space ship
+ */
 function moveShip() {
     if (ctx && spaceShip.image && shot.image) {
         ctx.clearRect(spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
@@ -307,8 +318,11 @@ function moveShip() {
         ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
     if (healthCounter <= 0) {
-        alert('GAME OVER');
-        document.location.reload();//Restart the game
+        isGameOver = true;
+        gameOver?.classList.remove('hide');
+        // setTimeout(() => {
+        //     document.location.reload();
+        // });
     }
 }
 
@@ -484,7 +498,6 @@ function collisionDetection(e: any) {
 
 }
 
-
 /**
  * Detect if there is a collision between the space ship and an ennemie
  * @param e event
@@ -503,8 +516,6 @@ function bonusCollisionDetection(b: any) {
         }
     }
 }
-
-
 
 /**
  * Detect if there is a collision between the shot ship and an ennemie
@@ -564,4 +575,6 @@ if (ammo) {
 /*
 FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES
 GENERATION ITEM ALEATOIRE POUR VIE ET AMMO
+CHANGER VITESSE MODE HARD
+METTRE LA VIE ET AMMO EN BAS DU CANVAS
 */
