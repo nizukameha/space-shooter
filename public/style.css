@@ -26,9 +26,6 @@ canvas {
 .container {
     display: flex;
 }
-.container-infos {
-    position: absolute;
-}
 .container-canva h1 {
     width: 97vw;
     display: flex;
@@ -37,13 +34,24 @@ canvas {
     margin: 20px;
 }
 .container-infos {
-    margin-top: 10vh;
+    
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+.healthAndAmmo, .scoreAndTime {
+    margin-top: 0px;
+    width: 45%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
 }
 .container-infos h2, .container-infos p, #arrow-key {
-    margin: 20px;
-}
-.container-infos h3 {
-    margin: 200px 20px 20px 20px;
+    margin-top: 20px;
 }
 #arrow-key {
     width: 100px;
@@ -119,13 +127,12 @@ button:hover {
 }
 .healthBar {
     width: 200px;
-    height: 15px;
+    height: 30px;
     background-color: grey;
-    margin-left: 10%;
 }
 .bar {
     width: 200px;
-    height: 15px;
+    height:30px;
     background-color: green;
     border: 1px solid white;
 }
@@ -133,8 +140,6 @@ button:hover {
     width: 100px;
 }
 #ammo {
-    margin-left: 20px;
-    margin-top: 20px;
     width: 180px;
 }
 .gameOver {
