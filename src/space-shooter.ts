@@ -563,28 +563,32 @@ function shotDetection(e: any, shots: any) {
     }
 }
 
-normal?.addEventListener('click', () => {
-    containerCanvas?.classList.remove('hide');
-    containerInfos?.classList.remove('hide');
-    if (containerStart) {
-        containerStart.style.display = 'none';
-    }
-    generateStars();
-    init();
-    timer();
-})
+window.addEventListener('load', (event) => {
+    normal?.addEventListener('click', () => {
+        containerCanvas?.classList.remove('hide');
+        containerInfos?.classList.remove('hide');
+        if (containerStart) {
+            containerStart.style.display = 'none';
+        }
+        generateStars();
+        init();
+        timer();
+    })
+});
 
-hard?.addEventListener('click', () => {
-    containerCanvas?.classList.remove('hide');
-    containerInfos?.classList.remove('hide');
-    if (containerStart) {
-        containerStart.style.display = 'none';
-    }
-    isHard = true;
-    generateStars();
-    init();
-    timer();
-})
+window.addEventListener('load', (event) => {
+    hard?.addEventListener('click', () => {
+        containerCanvas?.classList.remove('hide');
+        containerInfos?.classList.remove('hide');
+        if (containerStart) {
+            containerStart.style.display = 'none';
+        }
+        isHard = true;
+        generateStars();
+        init();
+        timer();
+    })
+});
 
 generateStars();
 
