@@ -51,6 +51,7 @@ let upPressed: boolean = false;
 let isHard: boolean = false;
 let isGameOver: boolean = false;
 
+
 const spaceShip: SpaceShip = {
     image: ship,
     shipX: 225,
@@ -122,7 +123,7 @@ setInterval(() => {
         iterator.isTouch = false;
         bonusAxisRandom(iterator);
     }
-}, 10000);
+}, 5000);
 
 //If a key is pressed a function is called
 document.addEventListener("keydown", (event) => {
@@ -501,8 +502,8 @@ function collisionDetection(e: any) {
  */
 function bonusCollisionDetection(b: any) {
     for (let i = 0; i < b.length; i++) {
-        if (spaceShip.shipX > b[i].bonusX - (b[i].bonusWidth / 2) && spaceShip.shipX < b[i].bonusX + b[i].bonusWidth) {
-            if (spaceShip.shipY > b[i].bonusY - (b[i].bonusHeight / 2) && spaceShip.shipY < b[i].bonusY + b[i].bonusHeight) {
+        if (b[i].bonusX > spaceShip.shipX - (spaceShip.shipWidth / 2) && b[i].bonusX < spaceShip.shipX + spaceShip.shipWidth) {
+            if (b[i].bonusY > spaceShip.shipY - (spaceShip.shipHeight / 2) && b[i].bonusY < spaceShip.shipY + spaceShip.shipHeight) {
                 b[i].isTouch = true;
                 shots.splice(0, 8);
                 ammoCounter = 8;
