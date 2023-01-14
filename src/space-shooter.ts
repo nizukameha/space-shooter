@@ -35,6 +35,7 @@ let time = document.querySelector<HTMLSpanElement>('#time');
 let score = document.querySelector<HTMLSpanElement>('#score');
 let ammo = document.querySelector<HTMLImageElement>('#ammo');
 const shootSoundSrc = document.querySelector<HTMLAudioElement>('#shootSound');
+const loopEnioSrc = document.querySelector<HTMLAudioElement>('#loopEnio');
 //Array
 let shots: any = [];
 //Number
@@ -114,6 +115,13 @@ const shootSound = Audio({
   preload: true
 });
 
+const loopEnio = Audio({
+    file: String(loopEnioSrc?.src),
+    loop: true,
+    volume: 0.1,
+    preload: true
+  });
+
 //Array of ennemies
 let ennemies = [bHole, gala, rPlanet];
 
@@ -133,7 +141,7 @@ setInterval(() => {
         iterator.isTouch = false;
         bonusAxisRandom(iterator);
     }
-}, 5000);
+}, 7000);
 
 //If a key is pressed a function is called
 document.addEventListener("keydown", (event) => {
@@ -185,15 +193,19 @@ document.addEventListener("keydown", (event) => {
             ammoCounter--;
             switch (ammoCounter) {
                 case 7:
+                    shootSound?.play();
                     ammo.src = ammo7;
                     break;
                 case 6:
+                    shootSound?.play();
                     ammo.src = ammo6;
                     break;
                 case 5:
+                    shootSound?.play();
                     ammo.src = ammo5;
                     break;
                 case 4:
+                    shootSound?.play();
                     ammo.src = ammo4;
                     break;
                 case 3:
@@ -260,6 +272,7 @@ function generateStars() {
  */
 function init() {
     requestAnimationFrame(init);
+    loopEnio.play();
     if (isGameOver == false) {
         collisionDetection(ennemies);
         shipShot();
