@@ -36,6 +36,8 @@ let score = document.querySelector<HTMLSpanElement>('#score');
 let ammo = document.querySelector<HTMLImageElement>('#ammo');
 const shootSoundSrc = document.querySelector<HTMLAudioElement>('#shootSound');
 const loopEnioSrc = document.querySelector<HTMLAudioElement>('#loopEnio');
+const gameOverSoundSrc = document.querySelector<HTMLAudioElement>('#gameOverSound');
+
 //Array
 let shots: any = [];
 //Number
@@ -121,7 +123,14 @@ const loopEnio = Audio({
     loop: true,
     volume: 0.1,
     preload: true
-  });
+});
+
+const gameOverSound = Audio({
+    file: String(gameOverSoundSrc?.src),
+    loop: false,
+    volume: 0.1,
+    preload: true
+});
 
 //Array of ennemies
 let ennemies = [bHole, gala, rPlanet];
@@ -273,8 +282,8 @@ function generateStars() {
  */
 function init() {
     requestAnimationFrame(init);
-    loopEnio.play();
     if (isGameOver == false) {
+        loopEnio.play();
         collisionDetection(ennemies);
         shipShot();
         shotDetection(ennemies, shots);
@@ -345,6 +354,8 @@ function moveShip() {
     }
     if (healthCounter <= 0) {
         isGameOver = true;
+        loopEnio.stop();
+        gameOverSound.play();
         gameOver?.classList.remove('hide');
     }
 }
