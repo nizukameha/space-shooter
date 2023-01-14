@@ -1,3 +1,5 @@
+//Audio
+import Audio from 'ts-audio';
 //Interface
 import { SpaceShip, Ennemies, Bonus } from "./entities";
 import ammo8 from '../assets/ammo8.png';
@@ -32,6 +34,7 @@ let healthBar = document.querySelector<HTMLDivElement>(".bar");
 let time = document.querySelector<HTMLSpanElement>('#time');
 let score = document.querySelector<HTMLSpanElement>('#score');
 let ammo = document.querySelector<HTMLImageElement>('#ammo');
+const shootSoundSrc = document.querySelector<HTMLAudioElement>('#shootSound');
 //Array
 let shots: any = [];
 //Number
@@ -104,6 +107,13 @@ const ammoBonus: Bonus = {
     isTouch: false
 }
 
+const shootSound = Audio({
+  file: String(shootSoundSrc?.src),
+  loop: false,
+  volume: 0.1,
+  preload: true
+});
+
 //Array of ennemies
 let ennemies = [bHole, gala, rPlanet];
 
@@ -163,6 +173,7 @@ document.addEventListener("keyup", (event) => {
 document.addEventListener("keydown", (event) => {
     // On peux limiter les tirs avecv la taille du tableau
     if (event.code == "Space" && shots.length < 8) {
+        shootSound?.play();
         const shot = {
             image: shotImg,
             shotX: spaceShip.shipX,
@@ -338,11 +349,11 @@ function shipShot() {
                 ctx.clearRect(shots[i].shotX, shots[i].shotY, shots[i].shotWidth, shots[i].shotHeight);
                 shots[i].shotY = spaceShip.shipY;
                 shots[i].shotX = spaceShip.shipX;
-
             }
         }
     }
 }
+
 
 /**
  * Draw ennemies
