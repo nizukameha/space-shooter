@@ -3,21 +3,23 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-      "start": "parcel public/*.html"
+        "start": "parcel public/*.html"
     },
     "repository": {
-      "type": "git",
-      "url": "git@gitlab.com/nizukameha/space-shooter.git"
-      
+        "type": "git",
+        "url": "git@gitlab.com/nizukameha/space-shooter.git"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "bugs": {
-      "url": "https://gitlab.com/nizukameha/space-shooter.git"
+        "url": "https://gitlab.com/nizukameha/space-shooter.git"
     },
     "homepage": "https://gitlab.com/nizukameha/space-shooter.git",
     "devDependencies": {
-      "parcel": "^2.8.0"
+        "parcel": "^2.8.0"
+    },
+    "dependencies": {
+        "ts-audio": "^0.7.2"
     }
-  }
+}
