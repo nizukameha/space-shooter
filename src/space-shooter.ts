@@ -53,6 +53,7 @@ let leftPressed: boolean = false;
 let downPressed: boolean = false;
 let upPressed: boolean = false;
 let isHard: boolean = false;
+let isEasy: boolean = false;
 let isGameOver: boolean = false;
 
 
@@ -180,7 +181,7 @@ document.addEventListener("keyup", (event) => {
 });
 document.addEventListener("keydown", (event) => {
     // On peux limiter les tirs avecv la taille du tableau
-    if (event.code == "Space" && shots.length < 8) {
+    if (event.code == "Space" && shots.length < 8 && (isEasy == true || isHard == true)) {
         shootSound?.play();
         const shot = {
             image: shotImg,
@@ -570,6 +571,7 @@ window.addEventListener('load', (event) => {
         if (containerStart) {
             containerStart.style.display = 'none';
         }
+        isEasy = true;
         generateStars();
         init();
         timer();
