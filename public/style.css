@@ -16,13 +16,28 @@ canvas {
     border: 1px solid white;
 }
 #myCanvas {
-    z-index: 2;
+    z-index: 3;
     opacity: 0.8;
 }
 #canvaBackground {
     z-index: 1;
-    
 }
+.btnGameOver {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#retry {
+    margin: 15% 5% 5% 5%;
+    padding: 3%;
+    text-align: center;
+    font-size: 1rem;
+    color: black;
+    width: 70%;
+    cursor: pointer;
+}
+
 .container {
     display: flex;
 }

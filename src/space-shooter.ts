@@ -16,9 +16,6 @@ const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("my
 const canvaBackground: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvaBackground");
 const ctx = canvas.getContext("2d");
 const ctxBackground = canvaBackground.getContext("2d");
-// if (ctx) {
-//     ctx.globalCompositeOperation = "darken";
-// }
 //DOM
 const containerCanvas = document.querySelector<HTMLDivElement>(".container-canva");
 const containerInfos = document.querySelector<HTMLDivElement>(".container-infos");
@@ -30,8 +27,10 @@ const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
 const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
 const shotImg = document.querySelector<HTMLImageElement>("#shot");
 const ammoMax = document.querySelector<HTMLImageElement>("#ammoMax");
+const explosion = document.querySelector<HTMLImageElement>("#explosion");
 const normal = document.querySelector<HTMLButtonElement>("#normal");
 const hard = document.querySelector<HTMLButtonElement>("#hard");
+const retry = document.querySelector<HTMLButtonElement>("#retry");
 let healthBarContainer = document.querySelector<HTMLDivElement>(".healthBar");
 let healthBar = document.querySelector<HTMLDivElement>(".bar");
 let time = document.querySelector<HTMLSpanElement>('#time');
@@ -257,6 +256,14 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
+// function drawExplosion(impactX:any, impactY:any) {
+//     if (ctx && explosion) {
+//         ctx.drawImage(explosion, impactX, impactY, 50, 50);
+//         ctx.clearRect(impactX, impactY, 100, 100);
+//     }
+// }
+
+
 /**
  * Draw stars
  */
@@ -303,7 +310,7 @@ function generateStars() {
 function init() {
     requestAnimationFrame(init);
     if (isGameOver == false) {
-        loopEnio.play();
+        //loopEnio.play();
         collisionDetection(ennemies);
         shipShot();
         shotDetection(ennemies, shots);
@@ -581,7 +588,7 @@ function shotDetection(e: any, shots: any) {
         for (let j = 0; j < e.length; j++) {
             if (shots[i].shotX > e[j].ennemieX - (e[j].ennemieWidth / 2) && shots[i].shotX < e[j].ennemieX + e[j].ennemieWidth) {
                 if (shots[i].shotY > e[j].ennemieY - (e[j].ennemieHeight / 2) && shots[i].shotY < e[j].ennemieY + e[j].ennemieHeight) {
-                    if (ctx) {
+                    if (ctx && explosion) {
                         e[j].isTouch = true;
                         ctx.clearRect(e[j].ennemieX, e[j].ennemieY, e[j].ennemieWidth, e[j].ennemieHeight);
                         ennemieAxisRandom(e[j]);
@@ -625,6 +632,10 @@ window.addEventListener('load', (event) => {
         timer();
     })
 });
+
+retry?.addEventListener('click', () => {
+    location.reload();
+}) 
 
 generateStars();
 
