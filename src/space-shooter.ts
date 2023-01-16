@@ -308,7 +308,7 @@ function init() {
             healthBar.style.backgroundColor = 'red';
             KonamiActivated = false;
         }
-        //loopEnio.play();
+        loopEnio.play();
         collisionDetection(ennemies);
         shipShot();
         shotDetection(ennemies, shots);
