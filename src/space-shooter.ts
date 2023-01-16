@@ -114,10 +114,10 @@ const ammoBonus: Bonus = {
 }
 
 const shootSound = Audio({
-  file: String(shootSoundSrc?.src),
-  loop: false,
-  volume: 0.1,
-  preload: true
+    file: String(shootSoundSrc?.src),
+    loop: false,
+    volume: 0.1,
+    preload: true
 });
 
 const loopEnio = Audio({
@@ -240,13 +240,13 @@ document.addEventListener("keydown", (event) => {
 });
 
 //Konami code
+let KonamiActivated = false;
 let k = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'],
-n = 0;
+    n = 0;
 document.addEventListener("keydown", (event) => {
     if (event.key === k[n++]) {
         if (n === k.length) {
-            alert('Konami !!!'); 
-            // Stop moving ennemies and drop nuclear bomb
+            KonamiActivated = true;
             n = 0;
             return false;
         }
@@ -255,14 +255,6 @@ document.addEventListener("keydown", (event) => {
         n = 0;
     }
 });
-
-// function drawExplosion(impactX:any, impactY:any) {
-//     if (ctx && explosion) {
-//         ctx.drawImage(explosion, impactX, impactY, 50, 50);
-//         ctx.clearRect(impactX, impactY, 100, 100);
-//     }
-// }
-
 
 /**
  * Draw stars
@@ -310,6 +302,12 @@ function generateStars() {
 function init() {
     requestAnimationFrame(init);
     if (isGameOver == false) {
+        if (KonamiActivated == true && healthBar && healthCounter > 10) {
+            healthCounter = 10;
+            healthBar.style.width = String(healthCounter) + 'px';
+            healthBar.style.backgroundColor = 'red';
+            KonamiActivated = false;
+        }
         //loopEnio.play();
         collisionDetection(ennemies);
         shipShot();
@@ -353,12 +351,12 @@ function timer() {
             }
         }
     }, 1000);
-            if (isHard && healthBar && healthBarContainer) {
-                movingEnnemie += 5;
-                healthCounter = 100;
-                healthBarContainer.classList.add('hardBar');
-                healthBar.style.width = String(healthCounter) + 'px';
-            }
+    if (isHard && healthBar && healthBarContainer) {
+        movingEnnemie += 5;
+        healthCounter = 100;
+        healthBarContainer.classList.add('hardBar');
+        healthBar.style.width = String(healthCounter) + 'px';
+    }
 }
 
 /**
@@ -377,7 +375,7 @@ function moveShip() {
         } else if (downPressed && spaceShip.shipY <= (canvas.height - 60)) {
             spaceShip.shipY += 8;
         }
-        
+
         ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
     if (healthCounter <= 0) {
@@ -635,7 +633,7 @@ window.addEventListener('load', (event) => {
 
 retry?.addEventListener('click', () => {
     location.reload();
-}) 
+})
 
 generateStars();
 
