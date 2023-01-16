@@ -16,6 +16,9 @@ const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("my
 const canvaBackground: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvaBackground");
 const ctx = canvas.getContext("2d");
 const ctxBackground = canvaBackground.getContext("2d");
+// if (ctx) {
+//     ctx.globalCompositeOperation = "darken";
+// }
 //DOM
 const containerCanvas = document.querySelector<HTMLDivElement>(".container-canva");
 const containerInfos = document.querySelector<HTMLDivElement>(".container-infos");
@@ -237,6 +240,23 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
+//Konami code
+let k = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'],
+n = 0;
+document.addEventListener("keydown", (event) => {
+    if (event.key === k[n++]) {
+        if (n === k.length) {
+            alert('Konami !!!'); 
+            // Stop moving ennemies and drop nuclear bomb
+            n = 0;
+            return false;
+        }
+    }
+    else {
+        n = 0;
+    }
+});
+
 /**
  * Draw stars
  */
@@ -350,6 +370,7 @@ function moveShip() {
         } else if (downPressed && spaceShip.shipY <= (canvas.height - 60)) {
             spaceShip.shipY += 8;
         }
+        
         ctx.drawImage(spaceShip.image, spaceShip.shipX, spaceShip.shipY, spaceShip.shipWidth, spaceShip.shipHeight);
     }
     if (healthCounter <= 0) {
@@ -575,6 +596,7 @@ function shotDetection(e: any, shots: any) {
     }
 }
 
+//Easy mode
 window.addEventListener('load', (event) => {
     normal?.addEventListener('click', () => {
         containerCanvas?.classList.remove('hide');
@@ -589,6 +611,7 @@ window.addEventListener('load', (event) => {
     })
 });
 
+//Hard mode
 window.addEventListener('load', (event) => {
     hard?.addEventListener('click', () => {
         containerCanvas?.classList.remove('hide');
@@ -612,6 +635,5 @@ if (ammo) {
     ammo.innerHTML = String(ammoCounter);
 }
 /*
-FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES
-GENERATION ITEM ALEATOIRE POUR VIE ET AMMO
+FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES 
 */
