@@ -18,8 +18,5 @@
     "homepage": "https://gitlab.com/nizukameha/space-shooter.git",
     "devDependencies": {
         "parcel": "^2.8.0"
-    },
-    "dependencies": {
-        "ts-audio": "^0.7.2"
     }
 }
