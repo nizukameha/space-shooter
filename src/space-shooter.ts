@@ -1,5 +1,3 @@
-//Audio
-import Audio from 'ts-audio';
 //Interface
 import { SpaceShip, Ennemies, Bonus } from "./entities";
 import ammo8 from '../assets/ammo8.png';
@@ -27,7 +25,6 @@ const redPlanet = document.querySelector<HTMLImageElement>("#red-planet");
 const galaxy = document.querySelector<HTMLImageElement>("#galaxy");
 const shotImg = document.querySelector<HTMLImageElement>("#shot");
 const ammoMax = document.querySelector<HTMLImageElement>("#ammoMax");
-const explosion = document.querySelector<HTMLImageElement>("#explosion");
 const normal = document.querySelector<HTMLButtonElement>("#normal");
 const hard = document.querySelector<HTMLButtonElement>("#hard");
 const retry = document.querySelector<HTMLButtonElement>("#retry");
@@ -39,7 +36,6 @@ let ammo = document.querySelector<HTMLImageElement>('#ammo');
 const shootSoundSrc = document.querySelector<HTMLAudioElement>('#shootSound');
 const loopEnioSrc = document.querySelector<HTMLAudioElement>('#loopEnio');
 const gameOverSoundSrc = document.querySelector<HTMLAudioElement>('#gameOverSound');
-
 //Array
 let shots: any = [];
 //Number
@@ -113,32 +109,13 @@ const ammoBonus: Bonus = {
     isTouch: false
 }
 
-const shootSound = Audio({
-    file: String(shootSoundSrc?.src),
-    loop: false,
-    volume: 0.1,
-    preload: true
-});
-
-const loopEnio = Audio({
-    file: String(loopEnioSrc?.src),
-    loop: true,
-    volume: 0.1,
-    preload: true
-});
-
-const gameOverSound = Audio({
-    file: String(gameOverSoundSrc?.src),
-    loop: false,
-    volume: 0.1,
-    preload: true
-});
-
 //Array of ennemies
 let ennemies = [bHole, gala, rPlanet];
 
+//Array of bonus
 let bonus = [ammoBonus];
 
+// First generation of X and Y axis
 let randomX = generateRandomX();
 let randomY = generateRandomY();
 
@@ -193,7 +170,12 @@ document.addEventListener("keyup", (event) => {
 document.addEventListener("keydown", (event) => {
     // On peux limiter les tirs avecv la taille du tableau
     if (event.code == "Space" && shots.length < 8 && (isEasy == true || isHard == true)) {
-        shootSound?.play();
+        if (shootSoundSrc) {
+            shootSoundSrc.loop = false;
+            shootSoundSrc?.play();
+            shootSoundSrc.currentTime = 0;
+            shootSoundSrc.volume = 0.1;
+        }
         const shot = {
             image: shotImg,
             shotX: spaceShip.shipX,
@@ -205,19 +187,15 @@ document.addEventListener("keydown", (event) => {
             ammoCounter--;
             switch (ammoCounter) {
                 case 7:
-                    shootSound?.play();
                     ammo.src = ammo7;
                     break;
                 case 6:
-                    shootSound?.play();
                     ammo.src = ammo6;
                     break;
                 case 5:
-                    shootSound?.play();
                     ammo.src = ammo5;
                     break;
                 case 4:
-                    shootSound?.play();
                     ammo.src = ammo4;
                     break;
                 case 3:
@@ -308,7 +286,11 @@ function init() {
             healthBar.style.backgroundColor = 'red';
             KonamiActivated = false;
         }
-        loopEnio.play();
+        if (loopEnioSrc) {
+            loopEnioSrc.volume = 0.5;
+            loopEnioSrc.loop = true;
+            loopEnioSrc.play();
+        }
         collisionDetection(ennemies);
         shipShot();
         shotDetection(ennemies, shots);
@@ -380,8 +362,12 @@ function moveShip() {
     }
     if (healthCounter <= 0) {
         isGameOver = true;
-        loopEnio.stop();
-        gameOverSound.play();
+        if (loopEnioSrc && gameOverSoundSrc) {
+            loopEnioSrc.pause();
+            gameOverSoundSrc.volume = 0.5;
+            gameOverSoundSrc.loop = false;
+            gameOverSoundSrc.play();
+        }
         gameOver?.classList.remove('hide');
     }
 }
@@ -404,7 +390,6 @@ function shipShot() {
         }
     }
 }
-
 
 /**
  * Draw ennemies
@@ -517,7 +502,9 @@ function ennemieAxisRandom(enn: any) {
 
 }
 
-
+/**
+ * Define random value for the Y axis of the bonus
+ */
 function bonusAxisRandom(b: any) {
     if (randomX.length == 0 && randomY.length == 0) {
         randomX = generateRandomX();
@@ -586,7 +573,7 @@ function shotDetection(e: any, shots: any) {
         for (let j = 0; j < e.length; j++) {
             if (shots[i].shotX > e[j].ennemieX - (e[j].ennemieWidth / 2) && shots[i].shotX < e[j].ennemieX + e[j].ennemieWidth) {
                 if (shots[i].shotY > e[j].ennemieY - (e[j].ennemieHeight / 2) && shots[i].shotY < e[j].ennemieY + e[j].ennemieHeight) {
-                    if (ctx && explosion) {
+                    if (ctx) {
                         e[j].isTouch = true;
                         ctx.clearRect(e[j].ennemieX, e[j].ennemieY, e[j].ennemieWidth, e[j].ennemieHeight);
                         ennemieAxisRandom(e[j]);
@@ -643,6 +630,3 @@ if (score) {
 if (ammo) {
     ammo.innerHTML = String(ammoCounter);
 }
-/*
-FAIRE EN SORTE D'AVOIR 3 OU 4 ENNEMIES EN MEME TEMPS ET QUE CE NE SOIT PAS TOUJOURS LES MEMES 
-*/
