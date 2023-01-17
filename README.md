@@ -9,7 +9,7 @@ Ce projet a été réalisé lors de ma formation : [Développeur et Développeur
 ### Accueil
 La page présente les commandes pour jouer et propose deux modes de difficultés (easy ou hard).
 ### Le jeu
-C'est un vertical shooter ou l'on controle un vaiseau qui navigue dans l'espace. Des ennemies, représentés par des planetes et des galaxies, apparaissent depuis le coin supérieur de la zone de jeu. Ces ennemies se déplacent verticalement. Si le joueur entre en collision avec eux, sa barre de vie diminue (jusqu'a qu'elle soit vide). Le joueur a la possibilité de tirer avec son vaiseau, le nombre de munitions est limité. Cependant des objets apparaissent pour donner d'autres munitions. Le but est d'obtenir le meilleur score possible.
+C'est un vertical shooter où l'on contrôle un vaisseau qui navigue dans l'espace. Des ennemies, représentés par des planètes et des galaxies, apparaissent depuis le coin supérieur de la zone de jeu. Les ennemies se déplacent verticalement. Si le joueur entre en collision avec eux, sa barre de vie diminue (jusqu'à qu'elle soit vide). Le joueur a la possibilité de tirer avec son vaisseau, le nombre de munitions est limité. Cependant des objets apparaissent pour donner d'autres munitions. Le but est d'obtenir le meilleur score possible.
 ### Musique
 La musique a été réalisé par Enio : 
 enio.sadflower@gmail.com
