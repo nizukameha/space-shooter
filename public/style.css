@@ -40,6 +40,8 @@ canvas {
 
 .container {
     display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .container-canva h1 {
     width: 97vw;
