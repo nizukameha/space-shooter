@@ -1,17 +1,17 @@
 # Space-shooter
 
-Ce projet a été réalisé lors de ma formation : [Développeur et Développeur Web Mobile](https://simplon.co/formation/developpeur-web-et-web-mobile/11) de Simplon. Il s'agit d'un jeu qui s'exécute dans le navigateur. Je l'ai développé avec Typescript sans framework. Le projet a été réalisé avec npm et parcel.
-## Aspects techniques 
-- Utilisation d'objets (avec des interfaces)
-- Modification des données durant la partie
-- Séparation des données et de l'affichage
+This project was developed during my studies at [Simplon](https://simplon.co/formation/developpeur-web-et-web-mobile/11). It is a game that runs in the browser. I developed it using Typescript without any frameworks. The project was built with npm and parcel.
+## Technical Aspects
+- Use of objects (with interfaces)
+- Data modification during gameplay
+- Separation of data and display
 - DOM
-### Accueil
-La page présente les commandes pour jouer et propose deux modes de difficultés (easy ou hard).
-### Le jeu
-C'est un vertical shooter où l'on contrôle un vaisseau qui navigue dans l'espace. Des ennemies, représentés par des planètes et des galaxies, apparaissent depuis le coin supérieur de la zone de jeu. Les ennemies se déplacent verticalement. Si le joueur entre en collision avec eux, sa barre de vie diminue (jusqu'à qu'elle soit vide). Le joueur a la possibilité de tirer avec son vaisseau, le nombre de munitions est limité. Cependant des objets apparaissent pour donner d'autres munitions. Le but est d'obtenir le meilleur score possible.
+### Home
+The page presents the controls for playing and offers two difficulty modes (easy or hard).
+### The game
+It is a vertical shooter where you control a spaceship navigating through space. Enemies, represented by planets and galaxies, appear from the upper corner of the game area. Enemies move vertically. If the player collides with them, health bar decreases (until it is empty). The player has the ability to shoot with their spaceship, but the ammunition is limited. However, power-up items appear to provide additional ammunition. The goal is to achieve the highest possible score.
 ### Musique
-La musique a été réalisé par Enio : 
+The music was created by Enio:
 enio.sadflower@gmail.com
 ## Liens
 - [Wireframe](https://www.figma.com/file/0IqQ4q0EhtXwQjXtF2VyQU/Untitled?node-id=0%3A1&t=vpJ8w4Y0mwEFP4MX-1)
